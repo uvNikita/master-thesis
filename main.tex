@@ -1,4 +1,4 @@
-\documentclass[MACS,english,DAIM]{ntnu-template/ntnuthesis/ntnuthesis}
+\documentclass[MACS,english,DAIM]{ntnuthesis/ntnuthesis}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -8,12 +8,13 @@
 
 
 \usepackage{color}         % For colouring text 
-\hypersetup{colorlinks=true,     
+\hypersetup{
+    colorlinks=true,     
 	linkcolor=blue,        % color of internal links (change box color with linkbordercolor)
     citecolor=blue,        % color of links to bibliography
     filecolor=blue,        % color of file links
     urlcolor=blue          % color of external links
-		}
+}
 \usepackage{csvsimple}  % for simple table reading and display
 \usepackage{url}
 \usepackage[numbers]{natbib} % for Vancover numbers in bibliography
@@ -22,6 +23,8 @@
 
 \input{info}
 \makefrontpages
+
+\hypersetup{pageanchor=false}
 \input{intro/intro}
 
 \tableofcontents
@@ -38,7 +41,7 @@
 \include{discussion}
 \include{conclusion}
 
-\bibliographystyle{ntnu-template/ntnuthesis/ntnuthesis}
+\bibliographystyle{ntnuthesis/ntnuthesis}
 
 \bibliography{mendeley}
 
