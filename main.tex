@@ -1,0 +1,48 @@
+\documentclass[MACS,english,DAIM]{ntnu-template/ntnuthesis/ntnuthesis}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage[pdftex]{graphicx, hyperref}   % For cross references in pdf
+\usepackage{graphicx}
+\usepackage{hyperref}   % For cross references in pdf
+
+
+\usepackage{color}         % For colouring text 
+\hypersetup{colorlinks=true,     
+	linkcolor=blue,        % color of internal links (change box color with linkbordercolor)
+    citecolor=blue,        % color of links to bibliography
+    filecolor=blue,        % color of file links
+    urlcolor=blue          % color of external links
+		}
+\usepackage{csvsimple}  % for simple table reading and display
+\usepackage{url}
+\usepackage[numbers]{natbib} % for Vancover numbers in bibliography
+
+\begin{document}
+
+\input{info}
+\makefrontpages
+\input{intro/intro}
+
+\tableofcontents
+
+\hypersetup{pageanchor=true}
+
+\listoffigures
+\listoftables
+
+
+\include{introduction}
+\include{methods}
+\include{results}
+\include{discussion}
+\include{conclusion}
+
+\bibliographystyle{ntnu-template/ntnuthesis/ntnuthesis}
+
+\bibliography{mendeley}
+
+\appendix
+\include{appendix}
+
+\end{document}
