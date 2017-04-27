@@ -1,2 +1,63 @@
 \chapter{Results}
 \label{chap:results}
+
+\begin{itemize}
+    \item Average precision
+    \begin{itemize}
+        \item Main set of categories
+        \item Small set of categories
+        \item Skiing classification
+    \end{itemize}
+    \item Precision-recall curves
+    \begin{itemize}
+        \item Main set of categories
+        \item Small set of categories
+        \item Skiing classification
+    \end{itemize}
+    \item Dataset analysis
+    \begin{itemize}
+        \item Number of categories, pictures
+        \item Number of labels per picture
+        \item Top categories
+        \item Examples of Norwegian-specific categories
+        \item Examples of news-agency specific content
+    \end{itemize}
+    \item Categories tree evaluation
+    \begin{itemize}
+        \item Examples of context, double-meaning, vague labels
+        \item Examples of different children-parent relationship
+        \item Different types of labels: objects, events, state, action etc.
+        \item Granularity of categores
+    \end{itemize}
+    \item AP improvement when removing faces from sports (GTX 580 only)
+    \item Comparison of precision-recall curves of different categories
+    \item Comparison of AP for different iterations
+    \item Adam vs SGD solvers on GTX 580, small category list
+    \item Training speed comparison for Titan and GTX 580 (but CPU and SSD can also contribute)
+    \item Different split techniques
+    \item Network performance on ImageNet images* (not done yet)
+\end{itemize}
+
+
+\section{Dataset analysis}
+
+\section{Trial experiment}
+\subsection{General-purpose classification}
+    \subsubsection{Classification performance}
+    \subsubsection{Adam vs SGD}
+
+\subsection{Specialized classification}
+    \subsubsection{Classification performance}
+    \subsubsection{LMDB optimization improvement}
+    % LMDB speedup
+
+\section{Main experiment}
+\subsection{General-purpose classification}
+    \subsubsection{Classification performance}
+    \subsubsection{Category tree evaluation and improvement}
+    \subsubsection{Dataset split method}
+    % smart way vs straitforward
+
+\subsection{Specialized classification}
+    \subsubsection{Classification performance}
+    %skiing

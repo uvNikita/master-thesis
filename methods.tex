@@ -1,2 +1,113 @@
 \chapter{Methods}
 \label{chap:methods}
+
+\section{Metadata preparation}
+% parsing tfo, netwick, filter greyscale
+\section{Trial experiments}
+    \subsection{General-purpose classification}
+    \subsubsection{Selection of categories}
+    \subsubsection{Images data preparation}
+    \subsubsection{Dataset split}
+    % Training/Validation/Test set:
+    % * According to Ng it should be around 60\%/20\%/20\%
+    % intersection checks
+    % the challange in multi-label split
+    % "smart" way
+    \subsubsection{Training process}
+    % caffe framework, pycaffe library, hyper parameters, fine-tuning, caffeNet
+    
+    % presision = N_correctly_detected_labels / N_total_detected_labels
+    % recall = N_correctly_detected_labels / N_all_correct_labels
+    
+    % update functions (cs231 l.6):
+    % * sgd -- old
+    % * mu - momentum around 0.5, 0.9 or 0.99
+    % * nesterov accelerated momentum (nag) even better (lookahead momentum)
+    % * adagrad -- per parameter update
+    % * rmsprop -- improved adagrad. Updates do not decay with time to zero
+    % * adam -- rmsprop + momentum (beta1 = 0.9, beta2 = 0.995) (default one)
+    
+    % should decay learning rate (e.g 0.9)
+    % epoch -- after seeing all images one time
+    \subsubsection{Testing process}
+    % transformer, batches, deploy network, metrics
+    \subsubsection{Hardware}
+
+\subsection{Specialized classification}
+To check potential of specialized classification and LMDB optimizations. Dataset split, training and testing processes, hardware are the same
+    \subsubsection{Selection of categories}
+    Single-label LMDB is easy therefore skiing category was selected
+    \subsubsection{Images data preparation}
+
+
+\section{Main experiments}
+    \subsection{General-purpose classification}
+    \subsubsection{Selection of categories}
+    
+    context-dependent image vs context-dependent term
+    
+    
+    Go trough all categories, remove:
+    \begin{itemize}
+        \item Context labels: second-hand-cloth, used-cars, counterfeit-money
+        \item Vague terms: love, daily-life, future
+        \item Combined label: childhood-and-youth-pictures, moos-and-lichen, fires-in-trains (exception: meetings-and-conferences)
+        \item Combined term: thriatlon, nordic-combined. Exception: biathlon
+        \item Double-meaning: direction (human pointing and signs)
+    \end{itemize}
+    Decisions were based on the label name only, examples of pictures were investigated only in cases when it was necessary to confirm meaning of the term.
+    
+    Exceptions: no-people
+    Double meaning examples: newsparers (companies and actuall newspapers)
+    
+    Some pictures were labeled with parents label, in most cases such labels were removed since it is usually not a good idea to mix children (e.g. colors).
+    
+    
+    If selected category (the one that satisfies all criterias) had also children categories which were subcategories of the parent one then pictures labeled with such children categories were also included in the parent category, even if child category by itself was not included in the final selection. For example, buses: school-buses, night-buses, bus-stops (maybe cars example is better). In this example images labeled with school-buses and night-buses (but not bus-stops) will be included in the buses category since there subclass relationship is taking place, even though night-buses doesn't satisfy criterias and thus will not be included in the final selection. This was made to both keep granularity of children categories, and to use information from the parent labels since in some cases parent label contained more pictures than all its descendants combined, more example of such parent categories: flowers, trees and dogs.
+    
+    examples of relationships:
+    \begin{itemize}
+        \item Subclass: buses -> school-buses
+        \item Part-of: hands -> fingers
+    \end{itemize}
+    
+    YES: dogs: types, NO: fruit: types
+    
+    non-subclass relationship: tram -> tram-stop
+    
+    types of categories (maybe according to wordnet):
+    \begin{itemize}
+        \item actions: swimming, fighting with fire
+        \item objects: 
+        \item
+    \end{itemize}
+    
+    \subsubsection{Images data preparation}
+    LMDB + Multi-labeling
+    % two LMDB datasets
+    % same dataset for all experiments
+    \subsubsection{Dataset split}
+    % new method
+    \subsubsection{Training process}
+    % caffeNet -- same, GoogleNet
+    % new batch sizes
+    \subsubsection{Testing process}
+    % batch sizes, optimized vectorized computations
+    \subsubsection{Hardware}
+
+\subsection{Specialized classification}
+Image data preparation, dataset split, training and testing processes, hardware are the same.
+    \subsubsection{Selection of categories}
+    Skiing
+    
+\section{Libraries and tools}
+This section gives description of used libraries and tools in experiments as well as motivation for using them.
+
+\begin{itemize}
+    \item Caffe \cite{Jia2014Caffe} is a one of the most widely adopted in the industry deep learning framework. In addition to the training framework itself it provides with collection of pretrained models from different research papers \cite{BerkeleyVisionandLearningCenterCaffeZoo} and Python language bindings. It also allows to run training on the CUDA \cite{NVIDIAParallelNVIDIA} enabled graphics cards which significantly improves both training and testing speed \cite{Krizhevsky2012ImageNetNetworks}.
+    \item numpy
+    \item pandas
+    \item jupyther
+    \item ETE
+    \item vagga
+\end{itemize}

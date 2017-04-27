@@ -1,2 +1,37 @@
 \chapter{Introduction}
 \label{chap:introduction}
+
+
+
+\section{Topic covered by the project}
+The topic of this project is within the field of computer science, more specifically it relates to issues of multi-label image classification. Currently there are two main approaches for image classification:
+\begin{itemize}
+    \item Using hand-crafted features (like edges, corners etc), which extract specific information from the images that can be further used to classify them in particular categories.
+    \item Applying deep neural networks to infer such features automatically using big datasets of images.
+\end{itemize}
+
+In recent years the second approach has outperformed the first one due to improved performance of graphics processing units (GPUs) and the availability of big image datasets \cite{Krizhevsky2012ImageNetNetworks, Russakovsky2015ImageNetChallenge}. %Therefore deep convolutional neural networks will be used in this project to solve the classification problem. 
+A lot of research have been made to solve single labeling classification, where there is only one object on the picture \cite{Krizhevsky2012ImageNetNetworks, Szegedy2015GoingConvolutions, He2015DeepRecognition, Zhang2016ResidualNetworks}. % Real-world images however usually contain several objects from different categories. %The problem of multi-label classification is seemingly more practical and general than the single labeling therefore this project will be dedicated to solving issues withing this  incorporating state of the art deep convolutional neural networks.
+Real-world images however usually contain several objects from different categories. Therefore multi-label classification, which goal is to find several objects on the image, is seemingly a more general and practical problem. The project will be dedicated to methods of solving multi-label image classification problem by incorporating state of the art deep convolutional neural networks.
+
+
+\section{Keywords}
+Deep Learning; Neural Networks; Image Annotation; Image Classification; Multilabel Classification; 
+
+\section{Problem description}
+During the past years single-label image classification made a big step forward thanks to utilization of deep learning approaches. In 2016 the winner of the ImageNet Large Scale Visual Recognition Challenge in the image classification task had a top-5 error rate of 2.9\% \cite{StanfordUniversity2016, Russakovsky2015ImageNetChallenge}. Finding solutions for multi-label classification, where images can contain several objects from different classes, is a much more complicated problem. A number of studies were conducted to solve this issue, however most of them use standard image datasets like PASCAL VOC \cite{Everingham2010TheChallenge} or NUS-WIDE \cite{Chua2009NUS-WIDE:Singapore} in order to acheive better generalizations and to be able to compare proposed methods and solutions in different papers \cite{Wei2016HCP:Classification, Gong2013DeepAnnotation, Oquab2014LearningNetworks, Chatfield2014ReturnNets}. However, more research is needed to test this methods on real-world datasets to evaluate their utility level on real-word tasks. Among other issues, such datasets can contain misplaced labels introduced by systematic errors due to misunderstanding between manual labelers or because of simple mistakes. Therefore this study will focus on the testing of a state of the art method in multi-label image classification using a real-word image dataset.
+
+
+\section{Justification, motivation and benefits}
+As mentioned earlier, multi-labeling image classification methods are trying to solve more practical and general issues compared to single labeling ones. However, most researches create and compare methods using standard, tested and more general datasets of images, while companies that want to use this methods usually have more specific, less structured real-world datasets. It is important to test how state of the art methods perform on such image collections. On the one side this project will be interesting for researches to know if current methods are working with the more realistic datasets, on the other -- companies will be interested to know if such methods are ready to being applied in their business.
+
+\section{Research questions}
+\begin{itemize}
+    \item What level of performance multi-label classification can achieve using fine-tuning via transfer learning when applied on real-world image collections?
+    \item How does it compare when applied on standard datasets specifically created for the purpose of classification method comparison: PASCAL VOC, NUS-WIDE, IMAGENET?
+    \item What are the main challenges in building multi-label image classification system for real-world datasets?
+    \item * What is the main contributor to the performance of multi-label classification system: network architecture, or image collection?
+\end{itemize}
+
+
+\section{Contributions}
