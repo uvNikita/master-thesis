@@ -104,10 +104,10 @@ Image data preparation, dataset split, training and testing processes, hardware 
 This section gives description of used libraries and tools in experiments as well as motivation for using them.
 
 \begin{itemize}
-    \item Caffe \cite{Jia2014Caffe} is a one of the most widely adopted in the industry deep learning framework. In addition to the training framework itself it provides with collection of pretrained models from different research papers \cite{BerkeleyVisionandLearningCenterCaffeZoo} and Python language bindings. It also allows to run training on the CUDA \cite{NVIDIAParallelNVIDIA} enabled graphics cards which significantly improves both training and testing speed \cite{Krizhevsky2012ImageNetNetworks}.
-    \item numpy
-    \item pandas
-    \item jupyther
-    \item ETE
-    \item vagga
+    \item \textbf{Caffe} \cite{Jia2014} is a one of the most widely adopted in the industry deep learning framework. In addition to the training framework itself it provides with collection of pretrained models from different research papers \cite{BerkeleyVisionandLearningCenter} and Python language bindings. It also allows to run training on the CUDA \cite{CUDA} enabled graphics cards which significantly improves both training and testing speed \cite{Krizhevsky2012}.
+    \item \textbf{NumPy} \cite{numpy} is a Python library for scientific computing. This library was used in the project for optimizations of computations trough vectorized calculations.
+    \item \textbf{pandas} \cite{pandas} is a Python library which provides efficient data manipulation trough different datastructures as well as its visualization. It was used for tables representations and drawing charts.
+    \item \textbf{Jupyter Notebook} \cite{jupyter} is a web application for live coding, visualization, numerical simulation etc. This application was used for both remote code editing and tables/charts visualizations.
+    \item \textbf{ETE Toolkit} \cite{ete3} is a Python framework for tree visualization and analysis. It was used for categories tree parsing (using newick \cite{newick} format), processing and visualization.
+    \item \textbf{vagga} \cite{vagga} is a tool that helps to describe and build development environment as well as to run processes inside of it. It also provides different levels of process isolation through Linux namespaces \cite{namespaces} kernel feature. It was used to specify the whole research project environment. Isolation properties that it gives as well as full declarative system specification should improve project reproducability.
 \end{itemize}
