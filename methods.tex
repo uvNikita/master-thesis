@@ -2,7 +2,17 @@
 \label{chap:methods}
 
 \section{Metadata preparation}
-% parsing tfo, netwick, filter greyscale
+This section describes steps that were made to process NTB images metadata in order to store it in more suitable for this project format.
+
+NTB uses proprietary text format to store images metadata, which is called ``tfo''. These files describe such image information as date, labels, description, photographer's name etc. For the purpose of this research, only image filename, SUBJECT\_HEADING and STORAGE\_TYPE fields were used. SUBJECT\_HEADING contains a list of labels in the Norwegian language, therefore each label was translated into English using dictionary provided by NTB. 15 labels were missing translation and therefore were removed, 85 images were labeled with these tags.
+
+Since all neural networks used in the research were designed to by trained on images with three color channels, grayscale and CMYK images were filtered out from the collection. STORAGE\_TYPE field, which among other information contain indication if the image is grayscale, was used for this purpose -- pictures which had ``svarthvitt'', ``blackandwhite'', ``monochrome'' and ``svartvit'' values in the STORAGE\_TYPE field were removed. However, it was empirically established that not all grayscale images were removed using this method, therefore, in addition, each image was read from the disk and number of its color channels was checked. The first method, therefore was used only for optimization purposes: such images were filtered out without reading its content. From the total number of 966372 processed images, 54045 (5.59\%) were removed due to having one channel (grayscale), 2 were removed due to having four channels (CMYK) and 1 image was removed because it was missing from the image collection on the disk.
+
+As a result of the metadata processing, a Python dictionary was built with image filenames as keys and a corresponding list of labels as values. Since this process was time-consuming (around five to six hours on PC with HDD), the resulting dictionary was saved to disk using pickle \cite{pickle} format and further read and reused in the experiments.
+
+In addition to image metadata, the author was also provided with categories tree definition by NTB. The tree was stored in a text-based format where the parent-child relationship was indicated by TAB character. The tree was transcoded to newick \cite{newick} format by applying recursive function and further used to build in-memory tree representation via Python ETE toolkit \cite{ete3}.
+
+
 \section{Trial experiments}
     \subsection{General-purpose classification}
     \subsubsection{Selection of categories}
