@@ -1,6 +1,9 @@
 \chapter{Methods}
 \label{chap:methods}
 
+Methods used in the research will be described in this chapter. In order to answer research question, there were two sets of experiments conducted in the study: trial and the main ones. The purpose of the trial experiments was to get understanding of classification system potential, to test its implementation, get better understanding of time constrains when it comes to training and testing processes, to compare different solutions as well as to learn tools and framework used. Lessons learned during trial experiments on the limited set of images categories were further used to perform more full study with more broad set of categories. Bigger scale of experiments was also possible due to donated GPU by the NVIDIA Corporation for this project (see section \ref{sec:main-hw}.
+
+
 \section{Metadata preparation}
 This section describes steps that were made to process NTB images metadata in order to store it in more suitable for this project format.
 
@@ -13,17 +16,125 @@ As a result of the metadata processing, a Python dictionary was built with image
 In addition to image metadata, the author was also provided with categories tree definition by NTB. The tree was stored in a text-based format where the parent-child relationship was indicated by TAB character. The tree was transcoded to newick \cite{newick} format by applying recursive function and further used to build in-memory tree representation via Python ETE toolkit \cite{ete3}.
 
 
-\section{Trial experiments}
-    \subsection{General-purpose classification}
-    \subsubsection{Selection of categories}
-    \subsubsection{Images data preparation}
-    \subsubsection{Dataset split}
-    % Training/Validation/Test set:
-    % * According to Ng it should be around 60\%/20\%/20\%
-    % intersection checks
-    % the challange in multi-label split
-    % "smart" way
-    \subsubsection{Training process}
+\section{Trial experiment}
+    The goal of trial experiment was to get insights on potential of the system when applied for given image collection, as well as to test implementation, training and test process, and to discover possible issues which can be addressed in the further experiments.
+    
+    The specialized set of experiments was used also to test the potential speedup of the training process when LMDB is used as a image data-source rather than real-time image processing.
+    
+    Further sections describe each part of the experiments in more details.
+    
+    \subsection{Selection of categories}
+    Initial selection of the categories was performed based on the flat list of NTB categories, without consideration of origin tree structure. All categories were sorted by the number of images contained and all categories with less than 1000 images were dropped. Only those categories were included, which names belonged to the ``entity'' or ``sport'' classes of WordNet \cite{wordnet}. Each category in the resulting list of candidates was manually investigated and included or excluded based on the selection criteria described further.
+    
+    The category was excluded based on its name if:
+    \begin{itemize}
+        \item It was a combined term. Examples: \textit{moos-and-lichen}, \textit{museums-and-art-galleries}.
+        \item It had double meaning. Examples: \textit{direction} (the sign or human pointing the direction).
+        \item The term was contextual rather than visual. Examples: \textit{used-cars}, \textit{counterfeit-money}.
+    \end{itemize}
+    
+    Random selection of images from each category was investigated and category was included only when all criteria were met:
+    \begin{itemize}
+        \item All images contained entity or sport of interest and it was clearly visible
+        \item All images were consistent in the interpretation of the term
+    \end{itemize}
+    
+    After selection of the categories, some of them were merged together or renamed. The final category list is shown in Table \ref{table:trial-categories}, as well as the names of the NTB labels that were merged together to form new category.
+    
+    \begin{table}[H]
+    \centering
+    \csvreader[
+        separator=semicolon,
+        tabular=|l|p{10cm}|,
+        table head=\hline Category & NTB categories\\\hline,
+        table foot=\hline,
+        head to column names,
+    ]
+    {tables/trial-categories.csv}
+    {}
+    {\category & \ntbcategories}
+    
+    \caption{Trial experiment categories selection}
+    \label{table:trial-categories}
+    \end{table}
+    
+    In this way, the selected categories were subjectively more consistent in their image content and therefore potentially less challenging for automated system to learn from.
+    
+    For the experiment with LMDB \cite{lmdb} used as a data source (see section \ref{sec:trial-training}), a specific set of categories was used, limited to types of skiing. For single-label cases, when there is only one label on the image, the interface for creation of LMDB entries is much simpler than for the multi-label cases. Skiing subcategories were therefore chosen since these were mutually exclusive in NTB's dataset.
+    
+    \subsection{Dataset preparation}
+    The base training dataset was created using selected categories. Distribution of images for each category is shown on Figure \ref{fig:trial-distribution-base}. The chart clearly indicates big imbalance in the number of images per category. Undersampling approach was used to solve this issue, where random images from the majority categories were removed from the dataset. There is additional challenge connected with multi-label classification that rises when some of the categories are tightly coupled, meaning that one image can be part of several categories. In this case, by removing an image from one category, it will have to be removed from all other categories it belongs to in order to keep consistency in the dataset. If the image will not be removed from the whole dataset, it can lead to false-positive errors (which are not errors originally) during the training. The problem arise when the image will have to be removed from the category with small number of images initially. There are two choices in this case:
+    
+    \begin{itemize}
+        \item Remove image from all categories. In this case it is possible to acheive state when no category has more pictures than particular threshold, but this can lead to even smaller number of images in underrepresented categories.
+        \item Keep image in all categories. In this case categories with small number of pictures will be preserved, however, it can be situation when some categories acceded specified threshold.
+    \end{itemize}
+    
+    \begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{trial-distribution-base}
+    \caption{Number of images per category distribution}
+    \label{fig:trial-distribution-base}
+    \end{figure}
+    
+    The decision on which choice to make depends on the particular case with the specific imbalance level, the level of intersection between categories as well as total number of images in all categories. Since some of the categories from the constructed dataset in this research had only 1000 images, the second option of keeping images in all categories was chosen.
+    
+    The resulting balanced dataset with the threshold level of 10000 is shown on Figure \ref{fig:trial-distribution-balanced}. Due to the chosen threshold, \textit{person}, \textit{football}, \textit{skiing}, \textit{team-handball}, \textit{woman}, \textit{crowd}, \textit{child}, \textit{skating} and \textit{car} categories were undersampled.
+    
+    \begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{trial-distribution-balanced}
+    \caption{Number of images per category distribution after balancing the dataset}
+    \label{fig:trial-distribution-balanced}
+    \end{figure}
+    
+    % portraits?
+    
+    After dataset is generated, it has to be split into three parts: training, validation and test. The training set is used directly in the training process, validation set is used to control training process and to find the point of its termination, test set is used in the testing process to check the resulting system performance. Intersection of all of this sets should be empty set, meaning that each image should be part of only one of them. Having separate testing set should potentially increase generalizability of results, since in this case system will be tested on new images, the ones that were not used during the training process. 
+    
+    In this research the original dataset was randomly split for each category with the ratio of 0.6, 0.2, 0.2 accordingly. For example, around 60\% of the images from the category \textit{person} were assigned to training set, 20\% -- to validation set and 20\% -- to test set. The challenge on this stage is similar as to the one from the previous step -- in case of multi-labeling system it is possible that some categories are tightly connected which can lead to unequally distributed images. For example, some images from the 60\% selected for the training set from the \textit{person} category can also be part of other categories, which can lead to the state when more than 60\% of images from these categories are now part of the training set. In the trial experiments, a ``priority'' algorithm of dataset split was implemented and used, where the training set had higher priority than validation and test sets, meaning that each category from the training set had a higher chance to satisfy 60\% percent requirement than ones from the other sets.
+    
+    The base balanced dataset as well as training, validation and test sets were generated randomly for each experiment. This was fixed in the main experiment in order to improve validity of the results.
+    
+    \subsection{Training process}
+    \label{sec:trial-training}
+    Caffe \cite{Caffe} learning framework was used in the research. Specifically, pycaffe \cite{pycaffe} Python interface was used to create specification, train and test deep neural networks.
+    
+    Due to the relatively old hardware available to the author during the trial experiments (see section \ref{sec:trial-hw}), CaffeNet \cite{CaffeNet} was chosen as a base neural network since it is slightly changed version of AlexNet \cite{Krizhevsky2012ImageNetDNN} which was trained on the similar hardware.
+    
+    The fine-tuning approach of pretrained network described in the section \ref{sec:transfer-learning} was used in the study. Pretrained weights for the CaffeNet were downloaded from the Caffe Model Zoo \cite{CaffeModelZoo}.
+    
+    Since original CaffeNet (as well as  AlexNet) was designed for single-labeling classification on ImageNet dataset, the network structure had to be adapted for multi-labeling purpose. Specifically, Data layer, the last InnerProduct layer and SoftMax loss layers were replaced in the model. Since Caffe Accuracy layer was not adapted to work for multi-label case during the time of the research, it was removed from the model. The weights for the rest of the layers were copied from the pretrained model.
+    
+    \paragraph{Data layer}
+    Caffe framework can read image data during the training process from the different sources like database, memory, or directly from files on the storage \cite{CaffeLayerCatalogue}. Due to its flexibility, Python layer was used to supply network with image data from disk, however, additional experiment was also conducted with LMDB \cite{lmdb} as a source of data to compare the speed of training. Since CaffeNet DNN was used in the experiment, all images were resized to 227x227 and RGB channels were swapped to BGR. In case of Python data layer this changes were made during the training process for each image, while when LMDB was used as a datasource this transformations were performed as a separate step before training and all image data was written to a newly created LMDB file.
+    
+    \paragraph{InnerProduct layer}
+    Since used parameters for CaffeNet were optimized to classify 1000 categories from ImageNet dataset, the last fully connected layer had to be retrained from scratch. Therefore InnerProduct layer with the name ``fc8'' which had 1000 outputs was replaced with the new one with the 39 outputs (number of selected categories).
+    
+    \paragraph{Loss layer}
+    SoftMax loss layer used both in AlexNet and CaffeNet is only suitable for single-label classification. Therefore SigmoidCrossEntropyLoss layer was used in all experiments, which predicts probability for each category and calculates loss:
+    
+    $$
+    E = -\frac{1}{N} \sum_{n=1}^{N} [p_n log \hat p_n + (1 - p_n) log(1 - \hat p_n)]
+    $$
+    
+    Two solver algorithms were tested in trial experiments: Stochastic gradient descent \cite{sgd} and Adam \cite{adam}. Solver hyper-parameters used for training:
+    \begin{itemize}
+        \item Base learning rate -- 0.0001
+        \item Learning rate policy -- fixed
+        \item Test iterations -- 1000
+        \item momentum -- 0.9
+        \item momentum2 -- 0.999
+        \item delta -- $10^{-8}$
+    \end{itemize}
+    
+    The last three parameters were used only together with Adam solver algorithm. \textit{momentum}, \textit{momentum2} and \textit{delta} parameters were set to the recommended values from the paper \cite{adam} (also default values in the Caffe framework).
+    
+    Even though fine-tuning approach was used in the study, all layers had the same learning rate during the training process in contrast to reducing learning rates for first layers or even freezing them completely. This was made based on the study \cite{Yosinski2014HowTransferable} were authors discovered that training all layers can give even better results compared to training only part of the layers.
+    
+    In order to utilize all available GPU memory as well as to improve stability of the training, batch size of 200 was used for training and 20 for validation. Networks for all trial experiments were trained for 1000 iterations.
+    
     % caffe framework, pycaffe library, hyper parameters, fine-tuning, caffeNet
     
     % presision = N_correctly_detected_labels / N_total_detected_labels
@@ -39,20 +150,38 @@ In addition to image metadata, the author was also provided with categories tree
     
     % should decay learning rate (e.g 0.9)
     % epoch -- after seeing all images one time
-    \subsubsection{Testing process}
+    \subsection{Testing process}
+    The ''deploy`` version of the CaffeNet was used for testing where data layer was replaced with direct Input layer and SigmoidCrossEntropyLoss replaced with Sigmoid layer. Each image from the prepared test set was preprocessed in the same way as for training, sent as an input to a trained network and predictions for each category were obtained and stored in the numpy matrix. This matrix was then used to calculate all matrix as described further.
+    
+    In order to be able to compare different multi-label network implementations, \textit{Average Precision (AP)} metric was in this study, which was defined in the PASCAL Visual Object Classes Challenge \cite{Everingham2010PASCAL-VOC} in the following way:
+    
+    \begin{displayquote}
+    For a given task and class, the precision/recall curve is computed from a method’s ranked output.Recall is defined as the proportion of all positive examples ranked above a given rank. Precision is the proportion of all examples above that rank which are from the positive class. The AP summarises the shape of the precision/recall curve, and is defined as the mean precision at a set of eleven equally spaced recall levels $[0,0.1, . . . ,1]$:
+    $$
+    AP = \frac{1}{11} \sum_{r \in \{0, 0.1, ..., 1\}} p_{interp}(r)
+    $$
+    The precision at each recall level $r$ is interpolated by taking the maximum precision measured for a method for which the corresponding recall exceeds $r$:
+    $$
+    p_{interp}(r) = \max_{\tilde{r}:\tilde{r} \ge r} p(\tilde{r})
+    $$
+    \end{displayquote}
+    
+    Therefore, both \textit{precision-recall curve} and \textit{average precision} were calculated for each category using numpy vectorized computations and further used for models comparison.
+    
     % transformer, batches, deploy network, metrics
-    \subsubsection{Hardware}
+    \subsection{Hardware}
+    \label{sec:trial-hw}
+    \begin{itemize}
+        \item \textbf{CPU} -- Intel Core 2 Duo
+        \item \textbf{GPU} -- NVIDIA GTX 580
+        \item \textbf{RAM} -- 
+        \item \textbf{Storage} -- 
+    \end{itemize}
 
-\subsection{Specialized classification}
-To check potential of specialized classification and LMDB optimizations. Dataset split, training and testing processes, hardware are the same
-    \subsubsection{Selection of categories}
-    Single-label LMDB is easy therefore skiing category was selected
-    \subsubsection{Images data preparation}
 
-
-\section{Main experiments}
-    \subsection{General-purpose classification}
-    \subsubsection{Selection of categories}
+\section{Main experiment}
+    % more challanging selection of categories
+    \subsection{Selection of categories}
     
     context-dependent image vs context-dependent term
     
@@ -73,7 +202,7 @@ To check potential of specialized classification and LMDB optimizations. Dataset
     Some pictures were labeled with parents label, in most cases such labels were removed since it is usually not a good idea to mix children (e.g. colors).
     
     
-    If selected category (the one that satisfies all criterias) had also children categories which were subcategories of the parent one then pictures labeled with such children categories were also included in the parent category, even if child category by itself was not included in the final selection. For example, buses: school-buses, night-buses, bus-stops (maybe cars example is better). In this example images labeled with school-buses and night-buses (but not bus-stops) will be included in the buses category since there subclass relationship is taking place, even though night-buses doesn't satisfy criterias and thus will not be included in the final selection. This was made to both keep granularity of children categories, and to use information from the parent labels since in some cases parent label contained more pictures than all its descendants combined, more example of such parent categories: flowers, trees and dogs.
+    If selected category (the one that satisfies all criteria) had also children categories which were subcategories of the parent one then pictures labeled with such children categories were also included in the parent category, even if child category by itself was not included in the final selection. For example, buses: school-buses, night-buses, bus-stops (maybe cars example is better). In this example images labeled with school-buses and night-buses (but not bus-stops) will be included in the buses category since there subclass relationship is taking place, even though night-buses doesn't satisfy criterias and thus will not be included in the final selection. This was made to both keep granularity of children categories, and to use information from the parent labels since in some cases parent label contained more pictures than all its descendants combined, more example of such parent categories: flowers, trees and dogs.
     
     examples of relationships:
     \begin{itemize}
@@ -92,32 +221,36 @@ To check potential of specialized classification and LMDB optimizations. Dataset
         \item
     \end{itemize}
     
-    \subsubsection{Images data preparation}
+    \subsection{Images data preparation}
     LMDB + Multi-labeling
     % two LMDB datasets
     % same dataset for all experiments
-    \subsubsection{Dataset split}
+    \subsection{Dataset split}
     % new method
-    \subsubsection{Training process}
+    \subsection{Training process}
+    In contrast to trial experiments, during the main experiments training process was stopped after loss on the validation set was stabilized in order to get the most from the used dataset and network and to avoid overfitting.
     % caffeNet -- same, GoogleNet
     % new batch sizes
-    \subsubsection{Testing process}
+    \subsection{Testing process}
     % batch sizes, optimized vectorized computations
-    \subsubsection{Hardware}
+    \subsection{Hardware}
+    \begin{itemize}
+        \item \textbf{CPU} -- Intel(R) Xeon(R) CPU E5-1620 v4 @ 3.50GHz
+        \item \textbf{GPU} -- NVIDIA Titan X Pascal
+        \item \textbf{RAM} -- 32 GB
+        \item \textbf{Storage} -- SK hynix SC308 256 SSD
+    \end{itemize}
+    \label{sec:main-hw}
 
-\subsection{Specialized classification}
-Image data preparation, dataset split, training and testing processes, hardware are the same.
-    \subsubsection{Selection of categories}
-    Skiing
     
 \section{Libraries and tools}
 This section gives description of used libraries and tools in experiments as well as motivation for using them.
 
 \begin{itemize}
-    \item \textbf{Caffe} \cite{Jia2014} is a one of the most widely adopted in the industry deep learning framework. In addition to the training framework itself it provides with collection of pretrained models from different research papers \cite{BerkeleyVisionandLearningCenter} and Python language bindings. It also allows to run training on the CUDA \cite{CUDA} enabled graphics cards which significantly improves both training and testing speed \cite{Krizhevsky2012ImageNetDNN}.
-    \item \textbf{NumPy} \cite{numpy} is a Python library for scientific computing. This library was used in the project for optimizations of computations trough vectorized calculations.
+    \item \textbf{Caffe} \cite{Caffe} is a one of the most widely adopted in the industry deep learning framework. In addition to the training framework itself it provides with collection of pretrained models from different research papers \cite{CaffeModelZoo} and Python language bindings. It also allows to run training on the CUDA \cite{CUDA} enabled graphics cards which significantly improves both training and testing speed \cite{Krizhevsky2012ImageNetDNN}.
+    \item \textbf{NumPy} \cite{numpy} is a Python library for scientific computing. This library was used in the project for computations optimization trough vectorized calculations.
     \item \textbf{pandas} \cite{pandas} is a Python library which provides efficient data manipulation trough different datastructures as well as its visualization. It was used for tables representations and drawing charts.
     \item \textbf{Jupyter Notebook} \cite{jupyter} is a web application for live coding, visualization, numerical simulation etc. This application was used for both remote code editing and tables/charts visualizations.
     \item \textbf{ETE Toolkit} \cite{ete3} is a Python framework for tree visualization and analysis. It was used for categories tree parsing (using newick \cite{newick} format), processing and visualization.
-    \item \textbf{vagga} \cite{vagga} is a tool that helps to describe and build development environment as well as to run processes inside of it. It also provides different levels of process isolation through Linux namespaces \cite{namespaces} kernel feature. It was used to specify the whole research project environment. Isolation properties that it gives as well as full declarative system specification should improve project reproducability.
+    \item \textbf{vagga} \cite{vagga} is a tool that helps to describe and build development environment as well as to run processes inside of it. It also provides different levels of process isolation through Linux namespaces \cite{namespaces} kernel feature. It was used to specify the whole research project environment. Isolation properties that it gives as well as full declarative system specification should improve project reproducibility.
 \end{itemize}
