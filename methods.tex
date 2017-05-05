@@ -1,7 +1,7 @@
 \chapter{Methods}
 \label{chap:methods}
 
-Methods used in the research will be described in this chapter. In order to answer research question, there were two sets of experiments conducted in the study: trial and the main ones. The purpose of the trial experiments was to get understanding of classification system potential, to test its implementation, get better understanding of time constrains when it comes to training and testing processes, to compare different solutions as well as to learn tools and framework used. Lessons learned during trial experiments on the limited set of images categories were further used to perform more full study with more broad set of categories. Bigger scale of experiments was also possible due to donated GPU by the NVIDIA Corporation for this project (see section \ref{sec:main-hw}.
+Methods used in the research will be described in this chapter. In order to answer the research questions, there were two sets of experiments conducted in the study: trial and the main ones. The purpose of the trial experiments was to get an understanding of classification system potential, to test its implementation, get a better understanding of time-constrains when it comes to training and testing processes, to compare different solutions as well as to learn tools and framework used. Lessons learned during trial experiments on the limited set of images categories were further used to perform a more full study with a more broad set of categories. A bigger scale of experiments was also possible due to donated GPU by the NVIDIA Corporation for this project (see section \ref{sec:main-hw}.
 
 
 \section{Metadata preparation}
@@ -9,7 +9,7 @@ This section describes steps that were made to process NTB images metadata in or
 
 NTB uses proprietary text format to store images metadata, which is called ``tfo''. These files describe such image information as date, labels, description, photographer's name etc. For the purpose of this research, only image filename, SUBJECT\_HEADING and STORAGE\_TYPE fields were used. SUBJECT\_HEADING contains a list of labels in the Norwegian language, therefore each label was translated into English using dictionary provided by NTB. 15 labels were missing translation and therefore were removed, 85 images were labeled with these tags.
 
-Since all neural networks used in the research were designed to by trained on images with three color channels, grayscale and CMYK images were filtered out from the collection. STORAGE\_TYPE field, which among other information contain indication if the image is grayscale, was used for this purpose -- pictures which had ``svarthvitt'', ``blackandwhite'', ``monochrome'' and ``svartvit'' values in the STORAGE\_TYPE field were removed. However, it was empirically established that not all grayscale images were removed using this method, therefore, in addition, each image was read from the disk and number of its color channels was checked. The first method, therefore was used only for optimization purposes: such images were filtered out without reading its content. From the total number of 966372 processed images, 54045 (5.59\%) were removed due to having one channel (grayscale), 2 were removed due to having four channels (CMYK) and 1 image was removed because it was missing from the image collection on the disk.
+Since all neural networks used in the research were designed to by trained on images with three color channels, grayscale and CMYK images were filtered out from the collection. STORAGE\_TYPE field, which among other information contain indication if the image is grayscale, was used for this purpose -- pictures which had ``svarthvitt'', ``blackandwhite'', ``monochrome'' and ``svartvit'' values in the STORAGE\_TYPE field were removed. However, it was empirically established that not all grayscale images were removed using this method, therefore, in addition, each image was read from the disk and number of its color channels was checked. The first method, therefore, was used only for optimization purposes: such images were filtered out without reading its content. From the total number of 966372 processed images, 54045 (5.59\%) were removed due to having one channel (grayscale), 2 were removed due to having four channels (CMYK) and 1 image was removed because it was missing from the image collection on the disk.
 
 As a result of the metadata processing, a Python dictionary was built with image filenames as keys and a corresponding list of labels as values. Since this process was time-consuming (around five to six hours on PC with HDD), the resulting dictionary was saved to disk using pickle \cite{pickle} format and further read and reused in the experiments.
 
@@ -17,14 +17,14 @@ In addition to image metadata, the author was also provided with categories tree
 
 
 \section{Trial experiment}
-    The goal of trial experiment was to get insights on potential of the system when applied for given image collection, as well as to test implementation, training and test process, and to discover possible issues which can be addressed in the further experiments.
+    The goal of the trial experiment was to get insights on a potential of the system when applied for given image collection, as well as to test implementation, training and test process, and to discover possible issues which can be addressed in the further experiments.
     
-    The specialized set of experiments was used also to test the potential speedup of the training process when LMDB is used as a image data-source rather than real-time image processing.
+    The specialized set of experiments was used also to test the potential speedup of the training process when LMDB is used as an image data-source rather than real-time image processing.
     
     Further sections describe each part of the experiments in more details.
     
     \subsection{Selection of categories}
-    Initial selection of the categories was performed based on the flat list of NTB categories, without consideration of origin tree structure. All categories were sorted by the number of images contained and all categories with less than 1000 images were dropped. Only those categories were included, which names belonged to the ``entity'' or ``sport'' classes of WordNet \cite{wordnet}. Each category in the resulting list of candidates was manually investigated and included or excluded based on the selection criteria described further.
+    The initial selection of the categories was performed based on the flat list of NTB categories, without consideration of origin tree structure. All categories were sorted by the number of images contained and all categories with less than 1000 images were dropped. Only those categories were included, which names belonged to the ``entity'' or ``sport'' classes of WordNet \cite{wordnet}. Each category in the resulting list of candidates was manually investigated and included or excluded based on the selection criteria described further.
     
     The category was excluded based on its name if:
     \begin{itemize}
@@ -33,13 +33,13 @@ In addition to image metadata, the author was also provided with categories tree
         \item The term was contextual rather than visual. Examples: \textit{used-cars}, \textit{counterfeit-money}.
     \end{itemize}
     
-    Random selection of images from each category was investigated and category was included only when all criteria were met:
+    Random selection of images from each category was investigated and the category was included only when all criteria were met:
     \begin{itemize}
         \item All images contained entity or sport of interest and it was clearly visible
         \item All images were consistent in the interpretation of the term
     \end{itemize}
     
-    After selection of the categories, some of them were merged together or renamed. The final category list is shown in Table \ref{table:trial-categories}, as well as the names of the NTB labels that were merged together to form new category.
+    After selection of the categories, some of them were merged together or renamed. The final category list is shown in Table \ref{table:trial-categories}, as well as the names of the NTB labels that were merged together to form a new category.
     
     \begin{table}[H]
     \centering
@@ -58,16 +58,16 @@ In addition to image metadata, the author was also provided with categories tree
     \label{table:trial-categories}
     \end{table}
     
-    In this way, the selected categories were subjectively more consistent in their image content and therefore potentially less challenging for automated system to learn from.
+    In this way, the selected categories were subjectively more consistent in their image content and therefore potentially less challenging for an automated system to learn from.
     
     For the experiment with LMDB \cite{lmdb} used as a data source (see section \ref{sec:trial-training}), a specific set of categories was used, limited to types of skiing. For single-label cases, when there is only one label on the image, the interface for creation of LMDB entries is much simpler than for the multi-label cases. Skiing subcategories were therefore chosen since these were mutually exclusive in NTB's dataset.
     
     \subsection{Dataset preparation}
-    The base training dataset was created using selected categories. Distribution of images for each category is shown on Figure \ref{fig:trial-distribution-base}. The chart clearly indicates big imbalance in the number of images per category. Undersampling approach was used to solve this issue, where random images from the majority categories were removed from the dataset. There is additional challenge connected with multi-label classification that rises when some of the categories are tightly coupled, meaning that one image can be part of several categories. In this case, by removing an image from one category, it will have to be removed from all other categories it belongs to in order to keep consistency in the dataset. If the image will not be removed from the whole dataset, it can lead to false-positive errors (which are not errors originally) during the training. The problem arise when the image will have to be removed from the category with small number of images initially. There are two choices in this case:
+    The base training dataset was created using selected categories. Distribution of images for each category is shown on Figure \ref{fig:trial-distribution-base}. The chart clearly indicates a big imbalance in the number of images per category. Undersampling approach was used to solve this issue, where random images from the majority categories were removed from the dataset. There is additional challenge connected with a multi-label classification that rises when some of the categories are tightly coupled, meaning that one image can be part of several categories. In this case, by removing an image from one category, it will have to be removed from all other categories it belongs to in order to keep consistency in the dataset. If the image will not be removed from the whole dataset, it can lead to false-positive errors (which are not errors originally) during the training. The problem arise when the image will have to be removed from the category with a small number of images initially. There are two choices in this case:
     
     \begin{itemize}
-        \item Remove image from all categories. In this case it is possible to acheive state when no category has more pictures than particular threshold, but this can lead to even smaller number of images in underrepresented categories.
-        \item Keep image in all categories. In this case categories with small number of pictures will be preserved, however, it can be situation when some categories acceded specified threshold.
+        \item Remove image from all categories. In this case, it is possible to achieve state when no category has more pictures than a particular threshold, but this can lead to an even smaller number of images in underrepresented categories.
+        \item Keep the image in all categories. In this case, categories with a small number of pictures will be preserved, however, it can be a situation when some categories acceded specified threshold.
     \end{itemize}
     
     \begin{figure}[h!]
@@ -77,7 +77,7 @@ In addition to image metadata, the author was also provided with categories tree
     \label{fig:trial-distribution-base}
     \end{figure}
     
-    The decision on which choice to make depends on the particular case with the specific imbalance level, the level of intersection between categories as well as total number of images in all categories. Since some of the categories from the constructed dataset in this research had only 1000 images, the second option of keeping images in all categories was chosen.
+    The decision on which choice to make depends on the particular case with the specific imbalance level, the level of intersection between categories as well as a total number of images in all categories. Since some of the categories from the constructed dataset in this research had only 1000 images, the second option of keeping images in all categories was chosen.
     
     The resulting balanced dataset with the threshold level of 10000 is shown on Figure \ref{fig:trial-distribution-balanced}. Due to the chosen threshold, \textit{person}, \textit{football}, \textit{skiing}, \textit{team-handball}, \textit{woman}, \textit{crowd}, \textit{child}, \textit{skating} and \textit{car} categories were undersampled.
     
@@ -90,30 +90,30 @@ In addition to image metadata, the author was also provided with categories tree
     
     % portraits?
     
-    After dataset is generated, it has to be split into three parts: training, validation and test. The training set is used directly in the training process, validation set is used to control training process and to find the point of its termination, test set is used in the testing process to check the resulting system performance. Intersection of all of this sets should be empty set, meaning that each image should be part of only one of them. Having separate testing set should potentially increase generalizability of results, since in this case system will be tested on new images, the ones that were not used during the training process. 
+    After the dataset is generated, it has to be split into three parts: training, validation, and test. The training set is used directly in the training process, validation set is used to control training process and to find the point of its termination, the test set is used in the testing process to check the resulting system performance. The intersection of all of this sets should be an empty set, meaning that each image should be part of only one of them. Having separate testing set should potentially increase the generalizability of results since in this case system will be tested on new images, the ones that were not used during the training process. 
     
-    In this research the original dataset was randomly split for each category with the ratio of 0.6, 0.2, 0.2 accordingly. For example, around 60\% of the images from the category \textit{person} were assigned to training set, 20\% -- to validation set and 20\% -- to test set. The challenge on this stage is similar as to the one from the previous step -- in case of multi-labeling system it is possible that some categories are tightly connected which can lead to unequally distributed images. For example, some images from the 60\% selected for the training set from the \textit{person} category can also be part of other categories, which can lead to the state when more than 60\% of images from these categories are now part of the training set. In the trial experiments, a ``priority'' algorithm of dataset split was implemented and used, where the training set had higher priority than validation and test sets, meaning that each category from the training set had a higher chance to satisfy 60\% percent requirement than ones from the other sets.
+    In this research, the original dataset was randomly split for each category with the ratio of 0.6, 0.2, 0.2 accordingly. For example, around 60\% of the images from the category \textit{person} were assigned to the training set, 20\% -- to the validation set and 20\% -- to the test set. The challenge on this stage is similar as to the one from the previous step -- in the case of a multi-labeling system, it is possible that some categories are tightly connected which can lead to unequally distributed images. For example, some images from the 60\% selected for the training set from the \textit{person} category can also be part of other categories, which can lead to the state when more than 60\% of images from these categories are now part of the training set. In the trial experiments, a ``priority'' algorithm of dataset split was implemented and used, where the training set had higher priority than validation and test sets, meaning that each category from the training set had a higher chance to satisfy 60\% percent requirement than ones from the other sets.
     
-    The base balanced dataset as well as training, validation and test sets were generated randomly for each experiment. This was fixed in the main experiment in order to improve validity of the results.
+    The base balanced dataset, as well as training, validation and test sets, were generated randomly for each experiment. This was fixed in the main experiment in order to improve the validity of the results.
     
     \subsection{Training process}
     \label{sec:trial-training}
-    Caffe \cite{Caffe} learning framework was used in the research. Specifically, pycaffe \cite{pycaffe} Python interface was used to create specification, train and test deep neural networks.
+    Caffe \cite{Caffe} learning framework was used in the research. Specifically, pycaffe \cite{pycaffe} Python interface was used to create specification, train, and test deep neural networks.
     
-    Due to the relatively old hardware available to the author during the trial experiments (see section \ref{sec:trial-hw}), CaffeNet \cite{CaffeNet} was chosen as a base neural network since it is slightly changed version of AlexNet \cite{Krizhevsky2012ImageNetDNN} which was trained on the similar hardware.
+    Due to the relatively old hardware available to the author during the trial experiments (see section \ref{sec:trial-hw}), CaffeNet \cite{CaffeNet} was chosen as a base neural network since it is a slightly changed version of AlexNet \cite{Krizhevsky2012ImageNetDNN} which was trained on the similar hardware.
     
-    The fine-tuning approach of pretrained network described in the section \ref{sec:transfer-learning} was used in the study. Pretrained weights for the CaffeNet were downloaded from the Caffe Model Zoo \cite{CaffeModelZoo}.
+    The fine-tuning approach of the pretrained network described in the section \ref{sec:transfer-learning} was used in the study. Pretrained weights for the CaffeNet were downloaded from the Caffe Model Zoo \cite{CaffeModelZoo}.
     
-    Since original CaffeNet (as well as  AlexNet) was designed for single-labeling classification on ImageNet dataset, the network structure had to be adapted for multi-labeling purpose. Specifically, Data layer, the last InnerProduct layer and SoftMax loss layers were replaced in the model. Since Caffe Accuracy layer was not adapted to work for multi-label case during the time of the research, it was removed from the model. The weights for the rest of the layers were copied from the pretrained model.
+    Since original CaffeNet (as well as  AlexNet) was designed for single-labeling classification on ImageNet dataset, the network structure had to be adapted for the multi-labeling purpose. Specifically, Data layer, the last InnerProduct layer, and SoftMax loss layers were replaced in the model. Since Caffe Accuracy layer was not adapted to work for the multi-label case during the time of the research, it was removed from the model. The weights for the rest of the layers were copied from the pretrained model.
     
     \paragraph{Data layer}
-    Caffe framework can read image data during the training process from the different sources like database, memory, or directly from files on the storage \cite{CaffeLayerCatalogue}. Due to its flexibility, Python layer was used to supply network with image data from disk, however, additional experiment was also conducted with LMDB \cite{lmdb} as a source of data to compare the speed of training. Since CaffeNet DNN was used in the experiment, all images were resized to 227x227 and RGB channels were swapped to BGR. In case of Python data layer this changes were made during the training process for each image, while when LMDB was used as a datasource this transformations were performed as a separate step before training and all image data was written to a newly created LMDB file.
+    Caffe framework can read image data during the training process from the different sources like database, memory, or directly from files on the storage \cite{CaffeLayerCatalogue}. Due to its flexibility, Python layer was used to supply network with image data from disk, however, the additional experiment was also conducted with LMDB \cite{lmdb} as a source of data to compare the speed of training. Since CaffeNet DNN was used in the experiment, all images were resized to 227x227 and RGB channels were swapped to BGR. In a case of Python data layer, this changes were made during the training process for each image, while when LMDB was used as a datasource these transformations were performed as a separate step before training and all image data was written to a newly created LMDB file.
     
     \paragraph{InnerProduct layer}
     Since used parameters for CaffeNet were optimized to classify 1000 categories from ImageNet dataset, the last fully connected layer had to be retrained from scratch. Therefore InnerProduct layer with the name ``fc8'' which had 1000 outputs was replaced with the new one with the 39 outputs (number of selected categories).
     
     \paragraph{Loss layer}
-    SoftMax loss layer used both in AlexNet and CaffeNet is only suitable for single-label classification. Therefore SigmoidCrossEntropyLoss layer was used in all experiments, which predicts probability for each category and calculates loss:
+    SoftMax loss layer used both in AlexNet and CaffeNet is only suitable for single-label classification. Therefore SigmoidCrossEntropyLoss layer was used in all experiments, which predicts the probability for each category and calculates loss:
     
     $$
     E = -\frac{1}{N} \sum_{n=1}^{N} [p_n log \hat p_n + (1 - p_n) log(1 - \hat p_n)]
@@ -133,7 +133,7 @@ In addition to image metadata, the author was also provided with categories tree
     
     Even though fine-tuning approach was used in the study, all layers had the same learning rate during the training process in contrast to reducing learning rates for first layers or even freezing them completely. This was made based on the study \cite{Yosinski2014HowTransferable} were authors discovered that training all layers can give even better results compared to training only part of the layers.
     
-    In order to utilize all available GPU memory as well as to improve stability of the training, batch size of 200 was used for training and 20 for validation. Networks for all trial experiments were trained for 1000 iterations.
+    In order to utilize all available GPU memory as well as to improve the stability of the training, the batch size of 200 was used for training and 20 for validation. Networks for all trial experiments were trained for 1000 iterations.
     
     % caffe framework, pycaffe library, hyper parameters, fine-tuning, caffeNet
     
@@ -151,7 +151,7 @@ In addition to image metadata, the author was also provided with categories tree
     % should decay learning rate (e.g 0.9)
     % epoch -- after seeing all images one time
     \subsection{Testing process}
-    The ''deploy`` version of the CaffeNet was used for testing where data layer was replaced with direct Input layer and SigmoidCrossEntropyLoss replaced with Sigmoid layer. Each image from the prepared test set was preprocessed in the same way as for training, sent as an input to a trained network and predictions for each category were obtained and stored in the numpy matrix. This matrix was then used to calculate all matrix as described further.
+    The ''deploy`` version of the CaffeNet was used for testing where data layer was replaced with direct Input layer and SigmoidCrossEntropyLoss replaced with the Sigmoid layer. Each image from the prepared test set was preprocessed in the same way as for training, sent as an input to a trained network and predictions for each category were obtained and stored in the numpy matrix. This matrix was then used to calculate all matrix as described further.
     
     In order to be able to compare different multi-label network implementations, \textit{Average Precision (AP)} metric was in this study, which was defined in the PASCAL Visual Object Classes Challenge \cite{Everingham2010PASCAL-VOC} in the following way:
     
