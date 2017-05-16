@@ -126,11 +126,117 @@ The size and uniqueness of the NTB dataset make it perfect subject of the resear
 % Multiple tags: 93.5%
 
 \section{Trial experiment}
-    \subsubsection{Classification performance}
-    \subsubsection{Adam vs SGD}
-    \subsubsection{LMDB vs Python DataLayer}
-    \subsubsection{Context improvements}
-    % removing portraits
+As it was mentioned earlier, a set of trial experiments were performed for multiple reasons, including to get a better understanding of the neural networks potential when trained on the available dataset, to test training and testing implementations, and to get insights on which hyperparameters works better for this purpose.
+
+All experiments performed during the trial part of the research were made on the set of categories, which selection was described in section \ref{sec:trial-cat-selection}. Results of the best network trained from the set of trial experiments are presented in the first section. The next section shows performance improvement achieved by filtering out the part of contextual images from the dataset. A comparison of two solver algorithms is shown in the third section, while the comparison of the training speed using two different solutions for data layer of the neural network is presented in the last section.
+
+As it was described in section \ref{sec:trial-dataset-prep} all trial experiments, except the comparison of performance with and without contextual images removed, were performed on different, randomly generated subsets of initial dataset. Therefore a direct comparison of the results from different experiments might not be precise enough. There can potentially be some variations in the results due to differences in the datasets. However, the results can give indications of whether one method of training is significantly better than the other.
+
+\subsubsection{Classification performance}
+    Results presented in this section were obtained from the network trained using the Adam solver algorithm for 1000 iterations. The image dataset was additionally filtered from contextual images, this is further described in the next section.
+    
+    Training and validation loss curves are shown on Figure \ref{fig:trial-training-curve}. It is clearly visible that both losses go down, which is expected. This is also a sign that overfitting is not taking place at this level of iterations
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{trial/adam_rmportraits/training_curve}
+        \caption{Training and validation loss curve during trial experiment}
+        \label{fig:trial-training-curve}
+    \end{figure}
+    
+    The resulting average precision for each category is shown on Figure \ref{fig:trial-average-precision}. 10 (25.6\%) out of 39 categories have an average precision of more than 80\%. All these categories, except \textit{cars} and \textit{boats} are belong to sports. 29 (74.4\%) categories have an AP of more than 60\%.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{trial/adam_rmportraits/average_precision}
+        \caption{Average precision results for trial experiment}
+        \label{fig:trial-average-precision}
+    \end{figure}
+    
+    The relationship between the average precision for each category and the sample size used for training is shown on Figure \ref{fig:trial-average-precision-vs-size}. The chart shows a non-linear dependency between the two values. The categories with the biggest sample sizes have the highest average precision values, however high values of average precision is also represented in categories with smaller sample sizes. Some of the categories with high sample sizes have a lower value of average precision. The potential reason for this can be that there are challenges connected with the category itself when it comes to automatic classification. The same reason could apply to the fact that categories with similar values of sample sizes have very different average precision (for example \textit{bus} and \textit{shoe}).
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{trial/adam_rmportraits/average_precision_vs_size}
+        \caption{Average precision vs category sample size used for training}
+        \label{fig:trial-average-precision-vs-size}
+    \end{figure}
+    
+    Figure \ref{fig:trial-400-vs-1000} shows a comparison of average precision values for different iterations. As expected, average precision increases with further training. An additional observation is that further training appears to have a bigger effect on categories with lower values of average precision, compared with categories with higher values which got a lower increase in the precision. Therefore the difference between higher and lower categories decreases in line with the number of passed iterations.
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{trial/adam_rmportraits/400_vs_1000_ap}
+        \caption{Comparison of the average precision for network on 400 and 1000 iterations during trial experiment}
+        \label{fig:trial-400-vs-1000}
+    \end{figure}
+    
+    As it was described in section \ref{sec:trial-testing}, average precision is calculated based on the precision-recall curve for each category. An example such curve (for the best category of \textit{skating}) is shown on Figure \ref{fig:trial-precision-recall-skating}. It shows that around 80\% of the \textit{skating} images can be found with almost 100\% of precision. Figure \ref{fig:trial-precision-recall-woman} shows the precision-recall curve for one of the lowest categories (\textit{woman}). In comparison to the previous chart, it is clearly visible that the precision drops much faster with higher values of recall.
+    
+    \begin{figure}[H]
+    \centering
+    \begin{subfigure}[a]{0.9\textwidth}
+        \includegraphics[width=\textwidth]{trial/adam_rmportraits/recall_precision_skating}
+        \caption{Precision-recall curve for \textit{skating} category}
+        \label{fig:trial-precision-recall-skating}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[a]{0.9\textwidth}
+        \includegraphics[width=\textwidth]{trial/adam_rmportraits/recall_precision_woman}
+        \caption{Precision-recall curve for \textit{woman} category}
+        \label{fig:trial-precision-recall-woman}
+    \end{subfigure}
+    \caption{Precision-recall curves for one of the best and worst categories}
+    \end{figure}
+    
+
+\subsubsection{Context improvements}
+    In order to show the potential improvement that can be achieved by filtering contextual images from the dataset, separate experiment was performed. As it was mentioned in section \ref{sec:trial-cat-selection}, images labeled as \textit{portrait}, \textit{press-conferences} and \textit{coaches} were removed from all categories except \textit{woman}, \textit{umbrella}, \textit{hand}, \textit{person}, \textit{norwegian-national-costumes}, \textit{child}, \textit{medal}, \textit{triumph}, \textit{man}. The goal was to remove portraits of persons (such as portraits of sportsmen or their coaches) and press-conference pictures since it was considered that in order to classify such images in certain categories (like \textit{football} or \textit{skating}) either additional information or a face-recognition system is needed.
+    
+    The first network was trained for 1000 iterations on a randomly generated dataset (as described in section \ref{sec:trial-cat-selection}), then contextual images were removed from the specified categories and a new network was trained for 1000 iterations on the filtered dataset. Results from both experiments are shown on Figure \ref{fig:trial-allpics-vs-rmportraits}.
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{trial/adam_allpics_vs_rmportraits_ap}
+        \caption{Comparison of average precision for network on 400 and 1000 iterations during trial experiment}
+        \label{fig:trial-allpics-vs-rmportraits}
+    \end{figure}
+    
+    28 (71.8\%) out of 39 categories got improvement in their average precision values. Interesting that 7 of them were categories which were skipped in the filtering process and had exactly the same dataset. The reason for this can be that in the used neural network implementation output probabilities from the final fully-connected layer are not fully independent from each other since they can depend on the same features from the earlier layers. Features learned on images from one category can also be used to produce probabilities for other categories, therefore changes in a sample for one category can influence end classification of the other.
+    
+    Results give an indication that end system classification performance can be potentially improved by removing fully contextual images from the dataset. Section \ref{sec:real-world-dataset-challanges} contains further discussion on obtained results.
+
+    
+\subsubsection{Adam vs SGD}
+    An additional experiment was conducted in order to test which solver algorithm works better for the purpose of the research. As it was described in section \ref{sec:trial-training} two widely used algorithms were compared: Adam and Stochastic Gradient Descent (SGD). Two separate networks were trained for 1000 iterations with corresponding algorithm applied. Resulting average precision for both networks is shown on Figure \ref{fig:trial-sgd-vs-adam}.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{trial/adam_vs_sgd_rmportraits_ap}
+        \caption{Comparison of average precision for network trained using SGD and Adam solver algorithms}
+        \label{fig:trial-sgd-vs-adam}
+    \end{figure}
+    
+    Adam solver algorithm showed significantly better results than SGD. The reason for these results is that Adam solver finds a local minimum of the loss function faster than SGD. Running neural network training with both algorithms longer potentially could give similar average precision values for all categories, provided results just suggest that in the current environment Adam solver converges in a shorter time. Adam solver was used in all further experiments.
+    
+    
+\subsubsection{LMDB vs Python DataLayer}
+    % ASK IF IT SHOULD BE HERE OR ONLY IN METHODS
+    All trial experiments were performed on a relatively small selection of categories and a total number of images. This allowed the author to perform experiments in a short period of time. During main experiments, however, a much broader set of categories was employed. The total number of images used in the training and testing process was therefore also increased. This could impact the overall training time of the system. Therefore it was decided to investigate on possible optimizations of the current system implementation. Since all computational layers in the system pipeline were already leveraging GPU, the bottleneck of the whole system was seemingly the first Python data layer. The Python data layer was used in the trial set of experiments due to its flexibility. For the main experiments, however, flexibility was considered less important and speed was a priority because of the increased dataset size. The Caffe framework supports other, more optimized ways to deliver image data inside the network. As it was described in section \ref{sec:trial-training}, Lightning Memory-Mapped Database (LMDB) was chosen as an alternative source of image data.
+    
+    An additional experiment was therefore performed in order to get insights on the potential speedup of the system training process while using this database. As it was mentioned earlier, due to the limited interface provided by the Caffe LMDB module, a single-label classification system was trained. Specifically, the skiing category was selected due to the mutually exclusive property of its descendants withing the NTB dataset. Two networks were trained during this experiment: one using Python layer as an image data source, and one that was loading images from the prepared LMDB file.
+    
+    Based on the reported numbers provided by the Caffe framework, an average value of 0.1045 iterations per seconds was achieved by the network that used a Python data layer, while the other network was operating on 0.5381 iterations per second. Therefore, by using LMDB file as an image data source the system achieved more than 5 times speedup during the training process. Part of the reason for such result is that images in LMDB are stored as a decompressed and prepossessed array of bytes, while in the Python layer implementation each image was decompressed and cropped in runtime. It should be mentioned that all image processing in the LMDB case happens before the start of the training, therefore it requires an additional step in the dataset preparation stage. However, since all main experiments were performed on the same dataset of images, this prepossessing was performed only once and the same database file was further used. An additional downside of this approach is an extra storage space needed for the database file itself.
+    
+    The resulting average precision of the skiing type classification is shown on Figure \ref{fig:trial-skiing-ap}.
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{trial/skiing_ap}
+        \caption{Average precision result of the skiing type classification}
+        \label{fig:trial-skiing-ap}
+    \end{figure}
+    
 
 \section{Main experiment}
     \subsubsection{Dataset split method}
