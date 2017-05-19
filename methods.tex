@@ -189,6 +189,7 @@ In addition to image metadata, the author was also provided with categories tree
     Lessons learning during trial experiments were used in the main set of experiments where the neural network was trained on much broader and challenging selection of categories. These experiments were also performed on the new hardware, which allowed to test more complex neural networks. Differences between two experiments are described in the following sections.
     
     \subsection{Selection of categories}
+    \label{sec:main-cat-selection}
     Selection of categories for the main experiment was based on the whole NTB tree, including its structure (parent-child relationship). As a result, a new tree was created, adapted to a training of the multi-label classification system. Issues and insights discovered during this process are presented in the section \ref{sec:tree-eval}. This section describes selection criteria for categories as well as all steps taken to create the new tree.
     
     The goal of this part of the research was to create a tree of categories that would be suitable for training the multi-label image classification system, maximizing utilization of the available metadata. Therefore decisions on how to change the existing tree, which categories to include, which of them to merge into one etc were made based on:
@@ -220,7 +221,7 @@ In addition to image metadata, the author was also provided with categories tree
     Categories were removed from the tree based on the following criteria:
     \begin{itemize}
         \item If the category name was fully context. Examples: \textit{second-hand-cloth}, \textit{used-cars}, \textit{counterfeit-money}.
-        \item If the category name was ambiguous. Examples: \textit{love}, \textit{daily-life}, \textit{future}.
+        \item If the category name was abstract. Examples: \textit{love}, \textit{daily-life}, \textit{future}.
         \item If the name was a combined term. Examples: \textit{childhood-and-youth-pictures}, \textit{moos-and-lichen}, \textit{fires-in-trains}. %(exception: meetings-and-conferences)
         \item If the name was representing a combined action. Examples: \textit{thriatlon} (different types of sports), \textit{nordic-combined} (different types of skiing). The category \textit{biathlon} was an exception and was included since even though it is also a combined sport, it is potentially visually recognizable by the unique combination of skiing and gun on the same picture.
         \item If the name could have a double meaning. Example: \textit{direction} (human pointing somewhere or road signs).
@@ -273,6 +274,7 @@ In addition to image metadata, the author was also provided with categories tree
     % non-subclass relationship: tram -> tram-stop
     
     \subsection{Dataset preparation}
+    \label{sec:main-dataset-prep}
     Using the categories tree, described in the previous section, a base dataset was created. Figure \ref{fig:main-cat-num-vs-threshold} shows the number of categories with an amount of images above the specified threshold. It is clearly visible that the majority of categories has a low number of images. For example, more than half of the categories contain less than 50 images.
     
     
@@ -291,6 +293,7 @@ In addition to image metadata, the author was also provided with categories tree
     
     
     \subsection{Training process}
+    \label{sec:main-training}
     Mostly the same training process described in the section \ref{sec:trial-training} was used in the main experiments, all differences in the process are described in this section. 
     
     Due to a new hardware available during the main experiment phase, in addition to CaffeNet classification system was trained on the newer GoogleNet DNN \cite{Szegedy2015GoingDeeper}. The same fine-tuning approach was applied. The CaffeNet was adapted to a multi-label case in the same way as during trial experiment.

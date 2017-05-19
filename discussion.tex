@@ -4,10 +4,13 @@
 \section{Classification performance}
 % average precision is only a general metric, the actual precision-recall levell should be configured acording to user reqirenments
 
+% differences in average precision in categories with the similar sample sizes -- due to the challanges in the categoreis themselve, or due to different quality of the dataset
+
 \section{Real-world dataset challenges}
 \label{sec:real-world-dataset-challanges}
 
-    
+% how to turn tree of tags into flat structure: propagate labels and use all, use only leafs, hybrid of two? Depends on the desired granularity and available labeled images.
+
 % In this experiment only semi-automatic filtering was performed, where selection of both categories which were filtered as well as labels were made manually while the actually removal of images was automatic. While this is faster, it can't remove all contextual images and some extra images can also be removed. Manual filtering could potentially give even better results.
 
 % labels can be not central on the image. Even if one will apply cutting algorithm, if this object was not presented in the initial set of categories, this could make 
@@ -15,6 +18,8 @@
 % \section{Configuration recommendations}
 
 \section{Dataset quality vs network architecture}
+
+    % DNN improvement should go together with better dataset
 % context improv: some of the issues can be improved automatically, some -- not (portraits)
 % GoogleNet
 
