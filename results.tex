@@ -40,6 +40,7 @@
 
 
 \section{Dataset analysis}
+\label{sec:dataset-analysis}
 Results of the initial analysis of the dataset provided by NTB are presented in this section. This analysis was the basis for the further experiments design and implementation.
 
 NTB categories are organized in a tree structure that contains 3006 nodes. There are 31 top-level categories, which are shown in Table \ref{table:top-level-categories}. This table also contains a number of descendants each top-level category has, as well as a total number of pictures that belong to this category subtree.  Each image can belong to zero or more categories, meaning that categories were not designed to be mutually exclusive on any level of the categories tree. Top 20 categories with the most pictures in them are shown on the Figure \ref{fig:top-cats-distribution}. Provided NTB dataset contains 912324 of images, 805946 (88\%) of them have at least one label, therefore belong at least to one category. The whole category tree is too big to visualize it in any way, however, the most important highlights and insights are provided further in this section.
@@ -72,7 +73,7 @@ Figure \ref{fig:num-labels} illustrate the distribution of the number of labels 
 Analysis of the categories tree, as well as example images from different categories, revealed some issues connected with the dataset described further.
 
 \paragraph{Mistakes and not visible entities}
-In many cases labeled object on the picture is not located in the center or even clearly visible. For example, picture labeled as \textit{blueberries} is shown on Figure \ref{fig:image-blueberries}. No blueberries are visible on this image, the main entity visualized on the picture is the person. However, the image is not even labeled with the tag \textit{person}.
+The dataset contain different classification mistakes like missing or extra labels on the picture. In many cases labeled object on the picture is not located in the center or even clearly visible. For example, picture labeled as \textit{blueberries} is shown on Figure \ref{fig:image-blueberries}. No blueberries are visible on this image, the main entity visualized on the picture is a person. However, the image is not even labeled with the tag \textit{person}. 
 
 \begin{figure}[h]
     \centering
@@ -80,6 +81,25 @@ In many cases labeled object on the picture is not located in the center or even
     \caption[Example picture from the \textit{blueberries} category]{\textit{blueberries}, \textit{berries}, \textit{autumn}, \textit{illustration-photos}. Photo by Terje Bendiksby~/~Scanpix}
     \label{fig:image-blueberries}
 \end{figure}
+
+\paragraph{Background objects}
+In some cases labeled object is visible, but not located in the main scene of the picture or is part of the background. For example, on Figure \ref{fig:image-flowers} two pictures classified as \textit{flowers} are shown, however while on both pictures it is possible to see flowers, but they are either surrouned by other objects on the scene or are on the side of it.
+
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}[a]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/flowers/sx907808}
+        \caption{\textit{flowers}, \textit{candles}, \textit{apartment-houses-in-the-city}, \textit{fires}, \textit{death}, \textit{house-fires}, \textit{crime-scenes}. Photo by Stian Lysberg Solum~/~Scanpix}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[a]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/flowers/ta550898}
+        \caption{\textit{red-carpet}, \textit{flowers}, \textit{the-norwegian-royal-family}, \textit{policemen}, \textit{full-length-portrait}, \textit{art-exhibitions}, \textit{hats}, \textit{the-dutch-royal-family}, \textit{opening-ceremonies}. Photo by Fredrik Varfjell~/~Scanpix}
+    \end{subfigure}
+    \caption{Example pictures from \textit{flowers} category}
+    \label{fig:image-flowers}
+\end{figure}
+
 
 \paragraph{Not consistent labels}
 Some labels are not consistent across the whole dataset. For example, \textit{sign-of-triumph} label is applied on images that have person with two hands raised up. However, often this label is missing on images and only label \textit{joy} is applied. This issue is illustrated on Figure \ref{fig:sign-of-triumph-example}, where from two visually similar images only one has \textit{sign-of-triumph} label.
@@ -105,10 +125,13 @@ Some labels are not consistent across the whole dataset. For example, \textit{si
 Labels in the NTB dataset can have a different purpose. Most of the labels define some entity or action that is presented in the picture. However, some labels are designed to be a modification of other labels. For example, label \textit{action} was designed to be used together with any sports category like \textit{football} to get football players in action. Mentioned earlier label \textit{alone} serves to identify images withing particular category with only one object illustrated on them. This inconsistency can potentially influence resulting classification system performance.
 
 \paragraph{Contextual categories}
-There are many contextual categories, where visual information is not enough to determine if image should belong to the category and additional context information is necessary. Example of such categories: \textit{second-hand-cloth}, \textit{used-cars}, \textit{counterfeit-money}, \textit{finance-debates}. More issues discovered during category tree evaluation are presented in section \ref{sec:tree-eval}.
+There are many contextual categories, where visual information is not enough to determine if image should belong to the category and additional context information is necessary. Example of such categories: \textit{second-hand-cloth}, \textit{used-cars}, \textit{counterfeit-money}, \textit{finance-debates}. More issues discovered during category tree evaluation are presented in Section \ref{sec:tree-eval}.
 
 \paragraph{Contextual images}
 There are many images which have an assigned category that can not be derived only from the image itself and more contextual information is needed. For example, picture that is part of the category \textit{politicians} as well as \textit{fishfarming} and \textit{fisheries-industry} is shown on Figure \ref{fig:politician-fish}. While the first category can potentially be automatically derived using face-recognition approach, the second and the third categories are fully contextual. In order to assign these labels to the picture, the system needs more additional information such as when and where the picture was taken as well as what was discussed in this place and time. Another example is press-conference or portrait pictures that are part of some sports category. From 151533 images of football, 151533 (10.4\%) belong to the \textit{coaches}, \textit{press-conferences} or \textit{portrait} categories as well.
+
+\paragraph{Similar images}
+Due to real-world nature of the used dataset, there are groups of pictures that were taken from one event. As a result, some images are visually very similar to each other. This issue can arise during the split of the dataset on training, validation and test parts. If two similar images will end up in two different sets it can potentially influence the reported precision of the system.
 
 \begin{figure}[h]
     \centering
@@ -128,9 +151,9 @@ The size and uniqueness of the NTB dataset make it perfect subject of the resear
 \section{Trial experiment}
 As it was mentioned earlier, a set of trial experiments were performed for multiple reasons, including to get a better understanding of the neural networks potential when trained on the available dataset, to test training and testing implementations, and to get insights on which hyperparameters works better for this purpose.
 
-All experiments performed during the trial part of the research were made on the set of categories, which selection was described in section \ref{sec:trial-cat-selection}. Results of the best network trained from the set of trial experiments are presented in the first section. The next section shows performance improvement achieved by filtering out the part of contextual images from the dataset. A comparison of two solver algorithms is shown in the third section, while the comparison of the training speed using two different solutions for data layer of the neural network is presented in the last section.
+All experiments performed during the trial part of the research were made on the set of categories, which selection was described in Section \ref{sec:trial-cat-selection}. Results of the best network trained from the set of trial experiments are presented in the first section. The next section shows performance improvement achieved by filtering out the part of contextual images from the dataset. A comparison of two solver algorithms is shown in the third section, while the comparison of the training speed using two different solutions for data layer of the neural network is presented in the last section.
 
-As it was described in section \ref{sec:trial-dataset-prep} all trial experiments, except the comparison of performance with and without contextual images removed, were performed on different, randomly generated subsets of initial dataset. Therefore a direct comparison of the results from different experiments might not be precise enough. There can potentially be some variations in the results due to differences in the datasets. However, the results can give indications of whether one method of training is significantly better than the other.
+As it was described in Section \ref{sec:trial-dataset-prep} all trial experiments, except the comparison of performance with and without contextual images removed, were performed on different, randomly generated subsets of initial dataset. Therefore a direct comparison of the results from different experiments might not be precise enough. There can potentially be some variations in the results due to differences in the datasets. However, the results can give indications of whether one method of training is significantly better than the other.
 
 \subsection{Classification performance}
     Results presented in this section were obtained from the network trained using the Adam solver algorithm for 1000 iterations. The image dataset was additionally filtered from contextual images, this is further described in the next section.
@@ -171,7 +194,7 @@ As it was described in section \ref{sec:trial-dataset-prep} all trial experiment
         \label{fig:trial-400-vs-1000}
     \end{figure}
     
-    As it was described in section \ref{sec:trial-testing}, average precision is calculated based on the precision-recall curve for each category. An example such curve (for the best category of \textit{skating}) is shown on Figure \ref{fig:trial-precision-recall-skating}. It shows that around 80\% of the \textit{skating} images can be found with almost 100\% of precision. Figure \ref{fig:trial-precision-recall-woman} shows the precision-recall curve for one of the lowest categories (\textit{woman}). In comparison to the previous chart, it is clearly visible that the precision drops much faster with higher values of recall.
+    As it was described in Section \ref{sec:trial-testing}, average precision is calculated based on the precision-recall curve for each category. An example such curve (for the best category of \textit{skating}) is shown on Figure \ref{fig:trial-precision-recall-skating}. It shows that around 80\% of the \textit{skating} images can be found with almost 100\% of precision. Figure \ref{fig:trial-precision-recall-woman} shows the precision-recall curve for one of the lowest categories (\textit{woman}). In comparison to the previous chart, it is clearly visible that the precision drops much faster with higher values of recall.
     
     \begin{figure}[H]
     \centering
@@ -191,9 +214,9 @@ As it was described in section \ref{sec:trial-dataset-prep} all trial experiment
     
 
 \subsection{Context improvements}
-    In order to show the potential improvement that can be achieved by filtering contextual images from the dataset, separate experiment was performed. As it was mentioned in section \ref{sec:trial-cat-selection}, images labeled as \textit{portrait}, \textit{press-conferences} and \textit{coaches} were removed from all categories except \textit{woman}, \textit{umbrella}, \textit{hand}, \textit{person}, \textit{norwegian-national-costumes}, \textit{child}, \textit{medal}, \textit{triumph}, \textit{man}. The goal was to remove portraits of persons (such as portraits of sportsmen or their coaches) and press-conference pictures since it was considered that in order to classify such images in certain categories (like \textit{football} or \textit{skating}) either additional information or a face-recognition system is needed.
+    In order to show the potential improvement that can be achieved by filtering contextual images from the dataset, separate experiment was performed. As it was mentioned in Section \ref{sec:trial-cat-selection}, images labeled as \textit{portrait}, \textit{press-conferences} and \textit{coaches} were removed from all categories except \textit{woman}, \textit{umbrella}, \textit{hand}, \textit{person}, \textit{norwegian-national-costumes}, \textit{child}, \textit{medal}, \textit{triumph}, \textit{man}. The goal was to remove portraits of persons (such as portraits of sportsmen or their coaches) and press-conference pictures since it was considered that in order to classify such images in certain categories (like \textit{football} or \textit{skating}) either additional information or a face-recognition system is needed.
     
-    The first network was trained for 1000 iterations on a randomly generated dataset (as described in section \ref{sec:trial-cat-selection}), then contextual images were removed from the specified categories and a new network was trained for 1000 iterations on the filtered dataset. Results from both experiments are shown on Figure \ref{fig:trial-allpics-vs-rmportraits}.
+    The first network was trained for 1000 iterations on a randomly generated dataset (as described in Section \ref{sec:trial-cat-selection}), then contextual images were removed from the specified categories and a new network was trained for 1000 iterations on the filtered dataset. Results from both experiments are shown on Figure \ref{fig:trial-allpics-vs-rmportraits}.
     
     \begin{figure}[H]
         \centering
@@ -202,13 +225,15 @@ As it was described in section \ref{sec:trial-dataset-prep} all trial experiment
         \label{fig:trial-allpics-vs-rmportraits}
     \end{figure}
     
-    28 (71.8\%) out of 39 categories got improvement in their average precision values. Interesting that 7 of them were categories which were skipped in the filtering process and had exactly the same dataset. The reason for this can be that in the used neural network implementation output probabilities from the final fully-connected layer are not fully independent from each other since they can depend on the same features from the earlier layers. Features learned on images from one category can also be used to produce probabilities for other categories, therefore changes in a sample for one category can influence end classification of the other.
+    28 (71.8\%) out of 39 categories got improvement in their average precision values. Including 7 categories from those which were skipped in the filtering process and had exactly the same dataset. 6 of the categories reduced their average preformance. One explanation of these results can be that in the used neural network implementation output probabilities from the final fully-connected layer are not fully independent from each other since they can depend on the same features from the earlier layers. Features learned on images from one category can also be used to produce probabilities for other categories, therefore changes in a sample for one category can influence end classification of the other.
     
-    Results give an indication that end system classification performance can be potentially improved by removing fully contextual images from the dataset. Section \ref{sec:real-world-dataset-challanges} contains further discussion on obtained results.
+    % TODO: MAYBE TO INCLUDE MEAN
+    
+    Results give an indication that end system classification performance can be potentially improved by removing fully contextual images from the dataset. Section \ref{sec:real-world-dataset-challenges} contains further discussion on obtained results.
 
     
 \subsection{Adam vs SGD}
-    An additional experiment was conducted in order to test which solver algorithm works better for the purpose of the research. As it was described in section \ref{sec:trial-training} two widely used algorithms were compared: Adam and Stochastic Gradient Descent (SGD). Two separate networks were trained for 1000 iterations with corresponding algorithm applied. Resulting average precision for both networks is shown on Figure \ref{fig:trial-sgd-vs-adam}.
+    An additional experiment was conducted in order to test which solver algorithm works better for the purpose of the research. As it was described in Section \ref{sec:trial-training} two widely used algorithms were compared: Adam and Stochastic Gradient Descent (SGD). Two separate networks were trained for 1000 iterations with corresponding algorithm applied. Resulting average precision for both networks is shown on Figure \ref{fig:trial-sgd-vs-adam}.
 
     \begin{figure}[H]
         \centering
@@ -217,16 +242,16 @@ As it was described in section \ref{sec:trial-dataset-prep} all trial experiment
         \label{fig:trial-sgd-vs-adam}
     \end{figure}
     
-    Adam solver algorithm showed significantly better results than SGD. The reason for these results is that Adam solver finds a local minimum of the loss function faster than SGD. Running neural network training with both algorithms longer potentially could give similar average precision values for all categories, provided results just suggest that in the current environment Adam solver converges in a shorter time. Adam solver was used in all further experiments.
+    Due to a significantly better average precision resulting from the training for the same amount of time, Adam solver was used in all further experiments.
     
     
 \subsection{LMDB vs Python DataLayer}
     % ASK IF IT SHOULD BE HERE OR ONLY IN METHODS
-    All trial experiments were performed on a relatively small selection of categories and a total number of images. This allowed the author to perform experiments in a short period of time. During main experiments, however, a much broader set of categories was employed. The total number of images used in the training and testing process was therefore also increased. This could impact the overall training time of the system. Therefore it was decided to investigate on possible optimizations of the current system implementation. Since all computational layers in the system pipeline were already leveraging GPU, the bottleneck of the whole system was seemingly the first Python data layer. The Python data layer was used in the trial set of experiments due to its flexibility. For the main experiments, however, flexibility was considered less important and speed was a priority because of the increased dataset size. The Caffe framework supports other, more optimized ways to deliver image data inside the network. As it was described in section \ref{sec:trial-training}, Lightning Memory-Mapped Database (LMDB) was chosen as an alternative source of image data.
+    All trial experiments were performed on a relatively small selection of categories and a total number of images. This allowed the author to perform experiments in a short period of time. During main experiments, however, a much broader set of categories was employed. The total number of images used in the training and testing process was therefore also increased. This could impact the overall training time of the system. Therefore it was decided to investigate on possible optimizations of the current system implementation. Since all computational layers in the system pipeline were already leveraging GPU, the bottleneck of the whole system was seemingly the first Python data layer. The Python data layer was used in the trial set of experiments due to its flexibility. For the main experiments, however, flexibility was considered less important and speed was a priority because of the increased dataset size. The Caffe framework supports other, more optimized ways to deliver image data inside the network. As it was described in Section \ref{sec:trial-training}, Lightning Memory-Mapped Database (LMDB) was chosen as an alternative source of image data.
     
     An additional experiment was therefore performed in order to get insights on the potential speedup of the system training process while using this database. As it was mentioned earlier, due to the limited interface provided by the Caffe LMDB module, a single-label classification system was trained. Specifically, the skiing category was selected due to the mutually exclusive property of its descendants withing the NTB dataset. Two networks were trained during this experiment: one using Python layer as an image data source, and one that was loading images from the prepared LMDB file.
     
-    Based on the reported numbers provided by the Caffe framework, an average value of 0.1045 iterations per seconds was achieved by the network that used a Python data layer, while the other network was operating on 0.5381 iterations per second. Therefore, by using LMDB file as an image data source the system achieved more than 5 times speedup during the training process. Part of the reason for such result is that images in LMDB are stored as a decompressed and prepossessed array of bytes, while in the Python layer implementation each image was decompressed and cropped in runtime. It should be mentioned that all image processing in the LMDB case happens before the start of the training, therefore it requires an additional step in the dataset preparation stage. However, since all main experiments were performed on the same dataset of images, this prepossessing was performed only once and the same database file was further used. An additional downside of this approach is an extra storage space needed for the database file itself.
+    Based on the reported numbers provided by the Caffe framework, an average value of 0.1045 iterations per seconds was achieved by the network that used a Python data layer, while the other network was operating on 0.5381 iterations per second. Therefore, by using LMDB file as an image data source the system achieved more than 5 times speedup during the training process. 
     
     The resulting average precision of the skiing type classification is shown on Figure \ref{fig:trial-skiing-ap}.
     
@@ -250,16 +275,16 @@ All lessons learned during the trial set of experiments were applied to perform 
     \begin{itemize}
         \item Some categories were abstract terms like \textit{genocide}, \textit{love}, \textit{future} or \textit{daily-life}.
         \item In some cases category name could have double meaning. For example, \textit{direction} can mean the direction sign, or person pointing direction.
-        \item Category names can be fully contextual, which mean that in order to classify the image into this category it is necessary to have additional information about it. Examples of such categories: \textit{grandfathers}, \textit{second-hand-cloth}, \textit{used-cars}, \textit{counterfeit-money}, \textit{war-criminals}.
+        \item Category names can be fully contextual, which mean that in order to classify the image into this category it is necessary to have additional information about it. Examples of such categories: \textit{grandfathers}, \textit{second-hand-cloth}, \textit{used-cars}, \textit{counterfeit-money}, \textit{war-criminals}. An additional discovery was that some categories were classified as contextual only with the knowledge about specific nature of the dataset. For example, categories \textit{prisoners} and \textit{prisons} were not included because pictures of Norwegian prisoners and prisons can hardly be distinguished from other images due to the special properties of Norwegian penology system.
         \item Category name was a combined term. Examples: \textit{childhood-and-youth-pictures}, \textit{moos-and-lichen}, \textit{fires-in-trains}. The last example category also shows that is some cases one category represented connection of other ones, \textit{trains} and \textit{fire} in this case. Multi-label classification system can potentially discover such connections automatically by assigning both labels to the image.
-        \item Some categories were representing a combined action. Examples: \textit{thriatlon} (different types of sports), \textit{nordic-combined} (different types of skiing). It can be hard to classify such categories since there are many pictures with only one type of sport visualized at the same time. The category \textit{biathlon} is an exception since in this case sportsmen's gun can be an indicator of pictures from this kind of sport. \textit{biathlon} category is also a good example of why manual selection of categories have be performed rather than automatic one.
+        \item Some categories were representing a combined action. Examples: \textit{thriatlon} (different types of sports), \textit{nordic-combined} (different types of skiing). It can be hard to classify such categories since there are many pictures with only one type of sport visualized at the same time. The category \textit{biathlon} is an exception since in this case sportsman's gun can be an indicator of pictures from this kind of sport. \textit{biathlon} category is also a good example of why manual selection of categories have be performed rather than automatic one.
     \end{itemize}
     
-    Due to all reasons described above the decision on which category to include had to be made for each case separately. Therefore all 3006 NTB categories were examined manually in order to create a new tree of categories, adapted for multi-label classification training. For reasons described earlier it was decided to use leaves of the categories tree where is was possible with a few exceptions in order to get maximum granularity of the end classification. The overall category tree transformation method designed and used in this research is described in section \ref{sec:main-cat-selection}.
+    Due to all reasons described above the decision on which category to include had to be made for each case separately. Therefore all 3006 NTB categories were examined manually in order to create a new tree of categories, adapted for multi-label classification training. For reasons described earlier it was decided to use leaves of the categories tree where is was possible with a few exceptions in order to get maximum granularity of the end classification. The overall category tree transformation method designed and used in this research is described in Section \ref{sec:main-cat-selection}.
     
     The final categories set contained 1507 categories, from which 1440 (95.55\%) were directly copied from the NTB dataset without any changes. The rest 67 categories were created by merging images from other categories. 23 (34.33\%) of them were extended with images of all their descendants (for example \textit{dogs}, \textit{mushrooms}, \textit{shoes}), while the rest of them were combined from a selected set of subcategories. An example of such selection is created category \textit{trees} that combined images of all tree types, but did not include images of such children categories like \textit{leaves} or \textit{branches}. Another example is category \textit{person} that was created by merging images labeled with original \textit{persons} NTB category as well as such categories as \textit{women}, \textit{men}, and even such context categories as \textit{grandmothers} and \textit{sons} which were not included in the final selection as a separate categories.
     
-    As it was described in section \ref{sec:main-dataset-prep} due to difficulties in dataset splitting connected with cross-categories connections in multi-label case, only categories with a minimal number of 50 images were included in the final set. Therefore from 1507 selected categories, only 663 were used for actual training.
+    As it was described in Section \ref{sec:main-dataset-prep} due to difficulties in dataset splitting connected with cross-categories connections in multi-label case, only categories with a minimal number of 50 images were included in the final set. Therefore from 1507 selected categories, only 663 were used for actual training.
 
 \subsection{Dataset split method}
     \label{sec:split-comparison}
@@ -287,7 +312,7 @@ All lessons learned during the trial set of experiments were applied to perform 
 \subsection{Classification performance}
     Two pretrained and adapted models were used in the main set of experiments: older and less computational demanding CaffeNet \cite{CaffeNet}, and newer and more advanced GoogleNet \cite{Szegedy2015GoingDeeper}. Both systems were trained to classify 663 selected categories. Achieved classification performance and comparison of these systems are presented in this section
     
-    As described in section \ref{sec:main-training} unlike during the trial set of experiments, a decision on termination of training process during the main set of experiments was based only on the validation loss curve. Specifically, training process was performed until validation loss was stabilized.
+    As described in Section \ref{sec:main-training} unlike during the trial set of experiments, a decision on termination of training process during the main set of experiments was based only on the validation loss curve. Specifically, training process was performed until validation loss was stabilized.
     
     Training and validation loss curves for CaffeNet based system is shown on Figure \ref{fig:main-caffenet-training-curve}. Snapshot of the system at 2500 iteration was used for all next computations since while training loss continued to go down being optimized by the solver algorithm, the validation loss remained almost the same in further iterations. In other words, after 2500 iterations the model started to overfit on the training set.
     
@@ -331,7 +356,7 @@ All lessons learned during the trial set of experiments were applied to perform 
         \label{fig:main-ap}
     \end{figure}
     
-    In order to compare performance for all categories, the distribution of the categories across the series of average precision values is shown on Figure \ref{fig:main-ap-dist}. The distribution for both systems covers almost the entire range of precision values. The GoogleNet based system have more categories in both the lower and higher ends of the precision scale. The whole distribution of this system is also more shifted towards the lower values, while CaffeNet based one is concentrated in the middle part of the range.
+    To compare performance for all categories the distribution of the categories across the series of average precision values is shown on Figure \ref{fig:main-ap-dist}. The distribution for both systems covers almost the entire range of precision values. The GoogleNet based system have more categories in both the lower and higher ends of the precision scale. The whole distribution of this system is also more shifted towards the lower values, while CaffeNet based one is concentrated in the middle part of the range. The mean average precision value for the CaffeNet based system was 0.375 with the standard deviation of 0.173, for the system based on the GoogleNet the mean average precision value was 0.34 with the standard deviation of 0.184.
     
     \begin{figure}[H]
         \centering
@@ -384,7 +409,7 @@ All lessons learned during the trial set of experiments were applied to perform 
         \label{main-pr}
     \end{figure}
     
-    It should be mentioned, that the actual system classification performance can be better than indicated by results from this section. The reason for that is a big amount of errors and inconsistency in the initial dataset described earlier. For instance, images that were correctly classified as \textit{full-length-portrait} by GoogleNet based system but did not have this label in the NTB dataset are shown on Figure \ref{fig:main-wrong-flp}. Another example is the pictures shown on Figure \ref{fig:main-wrong-sot} which were classified as \textit{sign-of-triumph} by the system, but did not have the corresponding label in the NTB dataset. Since the NTB dataset was considered as a ground truth in all experiments, such cases were treated as errors of the classification system and lead to reduced average precision results for specific categories.
+    It should be mentioned, that the actual system classification performance can be better than indicated by results from this section. The reason for that is a big amount of errors and inconsistency in the initial dataset described earlier. For instance, images that were correctly classified as \textit{full-length-portrait} by GoogleNet based system but did not have this label in the NTB dataset are shown on Figure \ref{fig:main-wrong-flp}. Another example is the pictures shown on Figure \ref{fig:main-wrong-sot} which were classified as \textit{sign-of-triumph} by the system, but did not have the corresponding label in the NTB dataset. Since the NTB dataset was considered as a ground truth in all experiments, such cases were treated as errors of the classification system and lead to reduced average precision results for specific categories. In addition, false negatives errors for some categories were investigated in order to get better understanding of the reasons of the achieved classification performance. This investigation confirmed the hypotesis about negative influence of the contextual images on the average precision results. For example, from 279 images that were labeled as \textit{automobile-racing} in the ground truth set but were not correctly classified to this category by the system 50 (17.9\%) images were also part of the \textit{portrait} or \textit{full-length-portrait} category, 29 (10.4\%) images were part of the \textit{spectators} category, and 22 images were part of the \textit{press-conferences} category; 96 (34.4\%) of images in total were part of at least one of these categories.
     
     \begin{figure}[h!]
         \centering

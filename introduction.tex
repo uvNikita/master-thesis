@@ -26,14 +26,19 @@ During the past years single-label image classification made a big step forward 
 As mentioned earlier, multi-labeling image classification methods are trying to solve more practical and general issues compared to single labeling ones. However, most researches create and compare methods using standard, tested and more general datasets of images, while companies that want to use this methods usually have more specific, less structured real-world datasets. It is important to test how state of the art methods perform on such image collections. On the one side this project will be interesting for researches to know if current methods are working with the more realistic datasets, on the other -- companies will be interested to know if such methods are ready to being applied in their business.
 
 \section{Research questions}
+% \begin{itemize}
+%     \item What level of performance multi-label classification can achieve using fine-tuning via transfer learning when applied on real-world image collections?
+%     \item How does it compare when applied on standard datasets specifically created for the purpose of classification method comparison: PASCAL VOC, NUS-WIDE, IMAGENET?
+%     \item What are the main challenges in building multi-label image classification system trained on the real-world datasets?
+%     \item * What is the main contributor to the performance of multi-label classification system: network architecture, or image collection? And how dataset can be improved?
+% \end{itemize}
+
 \begin{itemize}
-    \item What level of performance multi-label classification can achieve using fine-tuning via transfer learning when applied on real-world image collections?
-    \item How does it compare when applied on standard datasets specifically created for the purpose of classification method comparison: PASCAL VOC, NUS-WIDE, IMAGENET?
-    \item What are the main challenges in building multi-label image classification system trained on the real-world datasets?
-    \item * What is the main contributor to the performance of multi-label classification system: network architecture, or image collection? And how dataset can be improved?
+    \item What are the main challenges in building and training a multi-label image classification system on a real-world datasets?
+    \item What level of performance can a multi-label classification system achieve using a fine-tuning approach for training on a real-world image collection?
 \end{itemize}
 
+In addition two this questions, the study also looked into how different neural network configurations and their influence on the speed of the training process as well as the end system performance. Some ideas on how the dataset can be improved to increase system precision will also be discussed.
 
 \section{Contributions}
-    
-    Insights on how to build classification system: split, LMDB, Adam solver
+    Insights on how to build a classification system: split, LMDB, Adam solver

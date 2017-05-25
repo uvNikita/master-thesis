@@ -1,22 +1,32 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
+% in rw datasets you deal with what you have. For instance, labels in parent categories should be used
+% in the standard dt they take images, then desing categories and then manually or semimanually label them
 
+TODO: While which network configuration to use should be considered in each particular case, the study gives some insights on how different decisions can influence both training performance and final system classification precision. Two different network architectures were tested The choice of the solver method can influence 
+% Dataset splitting can be a challenge for multi-label classification case. Random sampling approach used in the main experiments of the study showed the best results in terms of the closest average ratio to the desired one. %The limitation on minimal number of images in one category can depend on how tightly connected are categories in the dataset and amout of images in them.  % not onlu real-world
+
+The NTB dataset analysis together with the tree transformation performed revealed possible challenges and issues of building multi-label classification system based on real-world datasets:
 \begin{itemize}
-    \item Overall image classification system performance depends on the initial requirements in terms of precision-recall rate. However, study showed that on the dataset used in the research, average precision of level X is achievable using state of the art methods.
-    \item .. More complex images can lead to worse results
-    \item Main challenges:
-    \begin{itemize}
-        \item Quality of the tags
-        \item Context and ambiguous labels
-        \item Design of categories tree
-        \begin{itemize}
-            \item Clear specification of terms
-            \item Granularity of categories
-        \end{itemize}
-        \item Duplicates
-        \item Amount and distribution of images
-        \item Multi-label dataset split
-    \end{itemize}
-    \item Investments in dataset or network architecture or processing power
+    \item Currently, modern neural networks do not incorporate hierarchical structure of the categories tree, therefore it has to be transformed to a flat structure. Depending on a specific dataset, different approaches can be used to perform this transformation. Characteristics of the dataset that should be considered include: if both parent and child categories are used to label images, if the relationship type between categories is consistent across the tree, and if the manual labeling rules are consistent. Depending on the dataset this process can be automatized to a certain level.
+    \item There can be contextual, combined, too abstract, and ambiguous categories. Such categories should be explicitly separated from other ones before the training process in order to acheive better system performance. % more categoires -> less weights/neurons can be used for others
+    %\item categories with different purpose?
+    \item One of the main challenges is to deal with contextual images, which can be classified only with additional information. While manual separation of such images could give the best outcome, the study suggest approach that uses known connections between categories in order to filter out some part of such images automatically.
+    \item Not consistent understanding and use of particular category between different manual labelers can result in reduced classification performance. However, results from the study suggest that in some cases it is still possible for a system to generalize on the category. This system can be further used to improve consistency in the initial dataset. % sign of triumph
+    
+    % \item duplicates
 \end{itemize}
+
+Results from the experiments show a big potential of fine-tuning pretrained convolutional neural networks in solving the problem of multi-label image classification on a real-world dataset. The actual level of classification for a particular dataset performance will depend on its quality and size. However, the results chapter can give indication of which classification system performance level can be achieved when training on a dataset similar to the one used in the research.
+% However, it is expected that correlations and insights will likely to be applicabe to other real-world datasets as well.
+Further investigation of the trained networks shows that due to existing errors in the original dataset, the end classification system performance can be even better than suggested by the results.
+
+Results suggest that improvement in the network architecture do not necessarily improve end classification performance. However, results also indicate that different neural networks can perform better in different conditions. For example, more modern GoogleNet architecture compared to older CaffeNet showed better results for categories with larger sample size, but had opposite effect on the categories with small number of pictures.
+
+% The manual work on the category tree is most likely required, but not necessarily on the image level. Results suggest that it is possible to further improve system performance by improving the dataset using available connections between categories (removing portrait and press-conference pics from sports categories) .. The next level would be to train network, use it to improve dataset and retrain it on it again.
+
+% An additional discovery This fact also implies that small imperfections of the dataset do not influence the end performance on a big scale. %But in depends on the size of sample.
+
+
+The main limitation of study is that all experiments were performed on the single available dataset, therefore the generalizability of results and insights is in question. Results are considered likely to be more generalizable to datasets similar to the one used in the study. Experiments were designed to maximize reproducablility and internal validity. However, further studies should be done to validate obtained results.
