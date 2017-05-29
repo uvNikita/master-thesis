@@ -32,7 +32,7 @@ In addition to image metadata, the author was also provided with categories tree
     \begin{itemize}
         \item It was a combined term. Examples: \textit{moos-and-lichen}, \textit{museums-and-art-galleries}.
         \item It had double meaning. Examples: \textit{direction} (the sign or human pointing the direction).
-        \item The term was contextual rather than visual. Examples: \textit{used-cars}, \textit{counterfeit-money}.
+        \item The term was contextual rather than visual. Which means that it is not possible to classify an image to this category based on only visual information and additional context is required. Examples: \textit{used-cars}, \textit{counterfeit-money}.
     \end{itemize}
     
     Random selection of images from each category was investigated and the category was included only when all criteria were met:
@@ -118,7 +118,7 @@ In addition to image metadata, the author was also provided with categories tree
     Since used parameters for CaffeNet were optimized to classify 1000 categories from ImageNet dataset, the last fully connected layer had to be retrained from scratch. Therefore InnerProduct layer with the name ``fc8'' which had 1000 outputs was replaced with the new one with the 39 outputs (number of selected categories).
     
     \paragraph{Loss layer}
-    SoftMax loss layer used both in AlexNet and CaffeNet is only suitable for single-label classification. Therefore SigmoidCrossEntropyLoss layer was used in all experiments, which predicts the probability for each category and calculates loss:
+    SoftMax loss layer used both in AlexNet and CaffeNet is only suitable for single-label classification. At the time of writing this thesis Caffe framework do not support mentioned earlier weighted approximate ranking (WARP) loss function. Therefore SigmoidCrossEntropyLoss layer was used in all experiments, which predicts the probability for each category and calculates loss in the following way:
     
     $$
     E = -\frac{1}{N} \sum_{n=1}^{N} [p_n log (\hat p_n) + (1 - p_n) log(1 - \hat p_n)]
@@ -214,13 +214,13 @@ In addition to image metadata, the author was also provided with categories tree
     Unlike during the trial experiment, an investigation of a random sample of images from each category, in order to a get better understanding of the category meaning withing the NTB system, was not performed. There were two reasons for this:
     
     \begin{enumerate}
-        \item The total number of categories in the NTB tree was 3006, which made it practically impossible to look into example pictures from each category, considering the time limitations for this project. 
+        \item The total number of categories in the NTB tree is 3437, which made it practically impossible to look into example pictures from each category, considering the time limitations for this project. 
         \item Since one of the applications of the resulting classification system is to provide a tag-based search for the end users, it was considered that users will base their decision during usage of such a system on the name of the category itself, similar to the workflow used by the author of the research.
     \end{enumerate}
     
     Categories were removed from the tree based on the following criteria:
     \begin{itemize}
-        \item If the category name was fully context. Examples: \textit{second-hand-cloth}, \textit{used-cars}, \textit{counterfeit-money}.
+        \item If the category name was fully contextual. Examples: \textit{second-hand-cloth}, \textit{used-cars}, \textit{counterfeit-money}.
         \item If the category name was abstract. Examples: \textit{love}, \textit{daily-life}, \textit{future}.
         \item If the name was a combined term. Examples: \textit{childhood-and-youth-pictures}, \textit{moos-and-lichen}, \textit{fires-in-trains}. %(exception: meetings-and-conferences)
         \item If the name was representing a combined action. Examples: \textit{thriatlon} (different types of sports), \textit{nordic-combined} (different types of skiing). The category \textit{biathlon} was an exception and was included since even though it is also a combined sport, it is potentially visually recognizable by the unique combination of skiing and gun on the same picture.
