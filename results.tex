@@ -117,7 +117,7 @@ Some labels are not consistent across the whole dataset. For example, \textit{si
         \caption{\textit{alone}, \textit{beach-volleyball}, \textit{action}, \textit{joy}. Photo by Alf Ove Hansen~/~Scanpix}
         \label{fig:without-sign-of-triumph}
     \end{subfigure}
-    \caption[Example of two similar images and with different labels]{Example of two similar images and with different labels. Only one image belongs to \textit{sign-of-triumph} category}
+    \caption[Example of two similar images but with different labels]{Example of two similar images but with different labels. Only one image belongs to \textit{sign-of-triumph} category}
     \label{fig:sign-of-triumph-example}
 \end{figure}
 
@@ -136,7 +136,7 @@ Due to real-world nature of the used dataset, there are groups of pictures that 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\textwidth]{images/sy253353}
-    \caption[Example of contextual labeled images]{\textit{politicians}, \textit{fishfarming}, \textit{fisheries-industry}, \textit{travel-in-norway}. Photo by Gorm Kallestad / Scanpix}
+    \caption[Example of contextual image]{\textit{politicians}, \textit{fishfarming}, \textit{fisheries-industry}, \textit{travel-in-norway}. Photo by Gorm Kallestad / Scanpix}
     \label{fig:politician-fish}
 \end{figure}
 
@@ -163,7 +163,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial/adam_rmportraits/training_curve}
-        \caption{Training and validation loss curve during trial experiment}
+        \caption[Trial experiment. Training and validation loss curve]{Training and validation loss curve}
         \label{fig:trial-training-curve}
     \end{figure}
     
@@ -172,7 +172,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial/adam_rmportraits/average_precision}
-        \caption{Average precision results for trial experiment}
+        \caption[Trial experiment. Average precision results]{Average precision results}
         \label{fig:trial-average-precision}
     \end{figure}
     
@@ -181,7 +181,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial/adam_rmportraits/average_precision_vs_size}
-        \caption{Average precision vs category sample size used for training}
+        \caption[Trial experiment. Average precision vs category sample size used for training]{Average precision vs category sample size used for training}
         \label{fig:trial-average-precision-vs-size}
     \end{figure}
     
@@ -190,7 +190,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial/adam_rmportraits/400_vs_1000_ap}
-        \caption{Comparison of the average precision for network on 400 and 1000 iterations during trial experiment}
+        \caption[Trial experiment. Comparison of the average precision for network on 400 and 1000 iterations]{Comparison of the average precision for network on 400 and 1000 iterations}
         \label{fig:trial-400-vs-1000}
     \end{figure}
     
@@ -200,7 +200,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     \centering
     \begin{subfigure}[a]{0.9\textwidth}
         \includegraphics[width=\textwidth]{trial/adam_rmportraits/recall_precision_skating}
-        \caption{Precision-recall curve for \textit{skating} category}
+        \caption[Trial experiment. Precision-recall curve for \textit{skating} category]{Precision-recall curve for \textit{skating} category}
         \label{fig:trial-precision-recall-skating}
     \end{subfigure}
     \\
@@ -209,7 +209,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
         \caption{Precision-recall curve for \textit{woman} category}
         \label{fig:trial-precision-recall-woman}
     \end{subfigure}
-    \caption{Precision-recall curves for one of the best and worst categories}
+    \caption[Trial experiment. Precision-recall curves for one of the best and worst categories]{Precision-recall curves for one of the best and worst categories}
     \end{figure}
     
 
@@ -221,7 +221,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial/adam_allpics_vs_rmportraits_ap}
-        \caption{Comparison of average precision for network on 400 and 1000 iterations during trial experiment}
+        \caption[Trial experiment. Average precision for all images vs contextual removed]{Comparison of average precision for network trained on the whole datasets and with contextual images removed}
         \label{fig:trial-allpics-vs-rmportraits}
     \end{figure}
     
@@ -238,7 +238,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial/adam_vs_sgd_rmportraits_ap}
-        \caption{Comparison of average precision for network trained using SGD and Adam solver algorithms}
+        \caption[Trial experiment. Average precision for Adam vs SGD solvers]{Comparison of average precision for network trained using SGD and Adam solver algorithms}
         \label{fig:trial-sgd-vs-adam}
     \end{figure}
     
@@ -258,7 +258,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial/skiing_ap}
-        \caption{Average precision result of the skiing type classification}
+        \caption[Trial experiment. Average precision result of the skiing type classification]{Average precision result of the skiing type classification}
         \label{fig:trial-skiing-ap}
     \end{figure}
     
@@ -319,7 +319,7 @@ All lessons learned during the trial set of experiments were applied to perform 
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{main/caffenet_training_curve}
-        \caption{Training and validation loss curve for CaffeNet based model}
+        \caption[Main experiment. Training and validation loss curve for CaffeNet based model]{Training and validation loss curve for CaffeNet based model}
         \label{fig:main-caffenet-training-curve}
     \end{figure}
     
@@ -328,7 +328,7 @@ All lessons learned during the trial set of experiments were applied to perform 
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{main/googlenet_training_curve}
-        \caption{Training and validation loss curve for GoogleNet based model}
+        \caption[Main experiment. Training and validation loss curve for GoogleNet based model]{Training and validation loss curve for GoogleNet based model}
         \label{fig:main-googlenet-training-curve}
     \end{figure}
     
@@ -352,7 +352,7 @@ All lessons learned during the trial set of experiments were applied to perform 
             \caption{Bottom 40 categories}
             \label{fig:main-ap-bottom-40}
         \end{subfigure}
-        \caption{Comparison of average precision results for best and worst categories for main experiment (sorted by CaffeNet values)}
+        \caption[Main experiment. Average precision CaffeNet vs GoogleNet]{Comparison of average precision results for best and worst categories for main experiment (sorted by CaffeNet values)}
         \label{fig:main-ap}
     \end{figure}
     
@@ -361,7 +361,7 @@ All lessons learned during the trial set of experiments were applied to perform 
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{main/ap_dist}
-        \caption{Comparison of CaffeNet and GoogleNet average precision distribution for the main experiment}
+        \caption[Main experiment. Average precision distribution CaffeNet vs GoogleNet]{Comparison of CaffeNet and GoogleNet average precision distribution for the main experiment}
         \label{fig:main-ap-dist}
     \end{figure}
     
@@ -380,7 +380,7 @@ All lessons learned during the trial set of experiments were applied to perform 
             \caption{Logarithmic scale on horizontal axes}
             \label{fig:main-ap-vs-size-log}
         \end{subfigure}
-        \caption{Comparison of CaffeNet and GoogleNet average precision vs category sample size for the main experiment}
+        \caption[Main experiment. Average precision vs size for CaffeNet and GoogleNet]{Comparison of CaffeNet and GoogleNet average precision vs category sample size for the main experiment}
         \label{fig:main-ap-vs-size}
     \end{figure}
     
@@ -405,7 +405,7 @@ All lessons learned during the trial set of experiments were applied to perform 
             \caption{Precision-recall curve for \textit{distance-running} category}
             \label{fig:main-pr-distance-running}
         \end{subfigure}
-        \caption{Comparison of CaffeNet and GoogleNet precision-recall curves for two categories in main experiment}
+        \caption[Main experiment. Precision-recall curves CaffeNet vs GoogleNet]{Comparison of CaffeNet and GoogleNet precision-recall curves for two categories in main experiment}
         \label{main-pr}
     \end{figure}
     
@@ -432,7 +432,7 @@ All lessons learned during the trial set of experiments were applied to perform 
             \includegraphics[width=\textwidth]{images/full-length-portrait/sy6a0659}
             \caption{Photo by Svein Ove Ekornesvåg~/~Scanpix}
         \end{subfigure}
-        \caption{Examples of images classified as \textit{full-length-portrait}, which were not labeled as such in the NTB database}
+        \caption[Main experiment. Examples of images classified as \textit{full-length-portrait}, which were not labeled as such in the NTB database]{Examples of images classified as \textit{full-length-portrait}, which were not labeled as such in the NTB database}
         \label{fig:main-wrong-flp}
     \end{figure}
     
@@ -457,6 +457,6 @@ All lessons learned during the trial set of experiments were applied to perform 
             \includegraphics[width=\textwidth]{images/sign-of-triumph/sy1fa403}
             \caption{Photo by Svein Ove Ekornesvåg~/~Scanpix}
         \end{subfigure}
-        \caption{Examples of images classified as \textit{sign-of-triumph}, which were not labeled as such in the NTB database}
+        \caption[Main experiment. Examples of images classified as \textit{sign-of-triumph}, which were not labeled as such in the NTB database]{Examples of images classified as \textit{sign-of-triumph}, which were not labeled as such in the NTB database}
         \label{fig:main-wrong-sot}
     \end{figure}
