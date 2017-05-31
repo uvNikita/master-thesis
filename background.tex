@@ -53,7 +53,7 @@ Yang et al. proposed similar infrastructure, but extended it with additional lar
 
 The method described by Girshik et al. in ``Rich feature hierarchies for accurate object detection and semantic segmentation'' paper also highly rely on the ground-truth bounding box during the training phase \cite{Girshick2014}. In particular, generated hypothesis are ranged based on the overlap with ground-truth box.
 
-Oquab et al. proposed method that also use bounding box information to produce labels for training images \cite{Oquab2014TransferringMidLevel}. Specifically, they propose to generate around 500 square patches from the picture and put a single label on each patch dependently on the overlap with the ground truth bounding box. Patches which intersect with two or more objects are filtered out, and the once which do not intersect with any objects are labeled as a background. Example training data generated from the image and ground-truth information is shown on figure \ref{fig:patches-example}.
+Oquab et al. proposed method that also use bounding box information to produce labels for training images \cite{Oquab2014TransferringMidLevel}. Specifically, they propose to generate around 500 square patches from the picture and put a single label on each patch dependently on the overlap with the ground truth bounding box. Patches which intersect with two or more objects are filtered out, and the once which do not intersect with any objects are labeled as a background. Example training data generated from the image and ground-truth information is shown on Figure \ref{fig:patches-example}.
 
 \begin{figure}
     \centering

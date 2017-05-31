@@ -41,31 +41,36 @@
 
 \section{Dataset analysis}
 \label{sec:dataset-analysis}
-This section presents the results of the initial analysis of the dataset provided by NTB. This analysis was the basis for the further experiments design and implementation.
+This section presents the results of the initial analysis of the NTB dataset. This analysis was the basis for the further experiments design and implementation.
 
-NTB categories are organized in a tree structure that contains 3437 nodes, 3006 (87.5\%) of them have at least one image, 2804 (81.6\%) are leaf nodes, maximum depth of the tree is 6, mean depth is 3.45 with the standard deviation of 0.87. There are 31 top-level categories, which are shown in Table \ref{table:top-level-categories}. It also contains an amount of descendants each top-level category has, as well as the total number of pictures that belong to this category subtree. Each image can belong to zero or more categories, meaning that categories were not designed to be mutually exclusive on any level of the categories tree. Top 20 categories with the most pictures in them are shown on the Figure \ref{fig:top-cats-distribution}.  Provided NTB dataset contains 912324 of images, 805946 (88\%) of them have at least one label, therefore belong at least to one category. The whole category tree is too big to visualize it in any way. However, the main highlights and insights are provided further in this section.
+NTB categories are organized in a tree structure, the 31 top-level categories of which are shown in Table \ref{table:top-level-categories}. The table also contains an amount of descendants each category has, as well as the total number of pictures that belong to its subtree.
 
-\begin{table}[h!]
+\begin{table}[H]
     \centering
+    \small
     \csvautotabular[respect sharp]{tables/top-level-categories.csv}
     \caption{Top Level categories with total number of descendants and images}
     \label{table:top-level-categories}
 \end{table}
 
-\begin{figure}[h!]
+The whole tree consists 3437 nodes, 3006 (87.5\%) of them have at least one image, 2804 (81.6\%) are leaf nodes, maximum depth of the tree is 6, mean depth is 3.45 with the standard deviation of 0.87. 
+
+Each image can belong to zero or more categories, meaning that categories were not designed to be mutually exclusive on any level of the categories tree. Top 20 categories with the most pictures in them are shown on the Figure \ref{fig:top-cats-distribution}.  Provided NTB dataset contains 912324 of images, 805946 (88\%) of them have at least one label, therefore belong at least to one category. The whole category tree is too big to visualize it in any way. However, the main highlights and insights are provided further in this section.
+
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{top-cats-distribution}
+    \includegraphics[width=\textwidth]{top-cats-distribution}
     \caption{Distribution of images in top 20 categories}
     \label{fig:top-cats-distribution}
 \end{figure}
 
 From both Table \ref{table:top-level-categories} as well as Figure \ref{fig:top-cats-distribution} it is possible to see that the provided dataset is focused on sports, politics and finance topics, which is expected since NTB is a Norwegian news content providing company. Further analysis also shows that many categories are specific to Norway, for example \textit{norwegian-royal-family}, \textit{cross-country-skiing}, \textit{the-king's-throne-speech}, \textit{the-parliament-building}, \textit{stave-churches}, \textit{norwegian-national-costumes} etc. The category types are also very diverse. For example there are categories which represent simple objects (\textit{tv-sets}, \textit{cars}, \textit{doors}), abstractions (\textit{communism}, \textit{neo-nazism}), group of people (\textit{policemen}, \textit{politicians}, \textit{christians}), holidays (\textit{christmas}, \textit{national-days}), relationships (\textit{grandchildren}, \textit{daughters}), sports (\textit{skiing}, \textit{football}), and actions (\textit{handshake}, \textit{document-signing}).
 
-Figure \ref{fig:num-labels} illustrate the distribution of the number of labels per one image in the dataset. Most of the images have from two to four labels associated with them. This fact together with the non-mutual exclusive set of categories, as well as the real-world nature of the images (which potentially are more crowded), makes a multi-label classification system more suitable for this dataset than a single-label. There is a label \textit{alone} in the NTB set of categories that is used to identify images which contain a single object. This label should not be confused with a single-label case of classification since even if there is only one object in the picture, in the multi-label case, it can belong to several categories which describe this object. For example, even though figures \ref{fig:without-sign-of-triumph} and \ref{fig:with-sign-of-triumph} both contain label \textit{alone}, they both also contain number of other labels that describe these pictures in different dimensions (kind of sport, gender, emotions etc).
+Figure \ref{fig:num-labels} illustrate the distribution of the number of labels per one image in the dataset. Most of the images have from two to four labels associated with them. This fact together with the non-mutual exclusive set of categories, as well as the real-world nature of the images (which potentially are more crowded), makes a multi-label classification system more suitable for this dataset than a single-label. There is a label \textit{alone} in the NTB set of categories that is used to identify images which contain a single object. This label should not be confused with a single-label case of classification since even if there is only one object in the picture, in the multi-label case, it can belong to several categories which describe this object. For example, even though Figures \ref{fig:without-sign-of-triumph} and \ref{fig:with-sign-of-triumph} both contain label \textit{alone}, they both also contain number of other labels that describe these pictures in different dimensions (kind of sport, gender, emotions etc).
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{num-labels}
+    \includegraphics[width=\textwidth]{num-labels}
     \caption{Number of labels per one image distribution}
     \label{fig:num-labels}
 \end{figure}
@@ -75,7 +80,7 @@ Analysis of the categories tree, as well as example images from different catego
 \paragraph{Mistakes and not visible entities}
 The dataset contains various classification mistakes like missing or extra labels on the picture. In many cases labeled object on the picture is not located in the center or even clearly visible. For example, picture labeled as \textit{blueberries} is shown on Figure \ref{fig:image-blueberries}. No blueberries are visible in this image, the main entity visualized on the picture is a person. However, the image does not even contain the label \textit{person}. 
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.3\textwidth]{images/sp616962}
     \caption[Example picture from the \textit{blueberries} category]{\textit{blueberries}, \textit{berries}, \textit{autumn}, \textit{illustration-photos}. Photo by Terje Bendiksby~/~Scanpix}
@@ -104,7 +109,7 @@ In some cases, labeled object is visible, but not located in the main scene of t
 \paragraph{Not consistent labels}
 Some labels are not consistent across the whole dataset. For example, \textit{sign-of-triumph} label is applied on images that have a person with two hands raised up. However, often this label is missing on such images and only label \textit{joy} is applied. This issue is illustrated on Figure \ref{fig:sign-of-triumph-example}, where from two visually similar pictures only one has \textit{sign-of-triumph} label.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[a]{0.3\textwidth}
         \includegraphics[width=\textwidth]{images/sp8718f2}
@@ -133,7 +138,7 @@ There are many images which have an assigned category that can not be derived on
 \paragraph{Similar images}
 Due to real-world nature of the used dataset, there are groups of pictures that were taken from one event. As a result, some images are visually very similar to each other. This issue can arise during the split of the dataset on training, validation and test parts. If two similar images end up in two different sets, it can potentially influence the reported precision of the system.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \includegraphics[width=0.5\textwidth]{images/sy253353}
     \caption[Example of contextual image]{\textit{politicians}, \textit{fishfarming}, \textit{fisheries-industry}, \textit{travel-in-norway}. Photo by Gorm Kallestad / Scanpix}
@@ -160,7 +165,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     
     Training and validation loss curves are shown on Figure \ref{fig:trial-training-curve}. The fact that both of the loss curves go down is also an evidence that overfitting is not taking place at this level of iterations
     
-    \begin{figure}[H]
+    \begin{figure}[ht!]
         \centering
         \includegraphics[width=\textwidth]{trial/adam_rmportraits/training_curve}
         \caption[Trial experiment. Training and validation loss curve]{Training and validation loss curve}
@@ -169,7 +174,7 @@ As it was described in Section \ref{sec:trial-dataset-prep} all trial experiment
     
     The resulting average precision for each category is shown on Figure \ref{fig:trial-average-precision}. 10 (25.6\%) out of 39 categories have an average precision of more than 80\%. All these categories, except \textit{cars} and \textit{boats} are belong to sports. 29 (74.4\%) categories have an AP of more than 60\%.
 
-    \begin{figure}[H]
+    \begin{figure}[ht!]
         \centering
         \includegraphics[width=\textwidth]{trial/adam_rmportraits/average_precision}
         \caption[Trial experiment. Average precision results]{Average precision results}
@@ -288,26 +293,26 @@ All lessons learned during the trial set of experiments were applied to perform 
 
 \subsection{Dataset split method}
     \label{sec:split-comparison}
-    As described in Methods chapter, different dataset splitting algorithms were used during the trial and main experiments. Comparison of the dataset distribution across training, validation and test sets of both methods is shown on Figure \ref{fig:main-split-distribution}. Horizontal axes of both histograms show a percentage of included images from the original image dataset of the particular category, while the vertical axes represent an amount of labels with this proportion value. The histogram of the new splitting method shown on Figure \ref{fig:main-split-distribution-main} follows the curve of a normal distribution for all sets, with the mean values of the desired ratio (60\% for the training set, 20\% for both validation and test sets). Therefore most of the categories in all three sets contain around the target amount of images with a smaller number of members below and above target values. Due to another, prioritized, method used in the trial experiments, distribution on Figure \ref{fig:main-split-distribution-trial} has another shape. Validation and test sets had higher priority than the training set. Therefore both of them have higher mean value than the target 20\%, which means that most of the categories from validation and test sets contain more than 20\% of images from the original dataset. Training set has a mean value lower than 60\% since there were not enough images left after splitting them between other sets.
+    As described in Methodology chapter, different dataset splitting algorithms were used during the trial and main experiments. Comparison of the dataset distribution across training, validation and test sets of both methods is shown on Figure \ref{fig:main-split-distribution}. Horizontal axes of both histograms show a percentage of included images from the original image dataset of the particular category, while the vertical axes represent an amount of labels with this proportion value. The histogram of the new splitting method shown on Figure \ref{fig:main-split-distribution-main} follows the curve of a normal distribution for all sets, with the mean values of the desired ratio (60\% for the training set, 20\% for both validation and test sets). Therefore most of the categories in all three sets contain around the target amount of images with a smaller number of members below and above target values. Due to another, prioritized, method used in the trial experiments, distribution on Figure \ref{fig:main-split-distribution-trial} has another shape. Validation and test sets had higher priority than the training set. Therefore both of them have higher mean value than the target 20\%, which means that most of the categories from validation and test sets contain more than 20\% of images from the original dataset. Training set has a mean value lower than 60\% since there were not enough images left after splitting them between other sets.
+    
+    The new splitting method was employed in all main experiments due to its better performance regarding the distance to the target split ratio.
     
     \begin{figure}[H]
     \centering
-    \begin{subfigure}[a]{0.9\textwidth}
-        \includegraphics[width=\textwidth]{main/split/split_distribution_trial}
-        \caption{Trial experiment dataset splitting method}
-        \label{fig:main-split-distribution-trial}
-    \end{subfigure}
-    \\
     \begin{subfigure}[a]{0.9\textwidth}
         \includegraphics[width=\textwidth]{main/split/split_distribution_main}
         \caption{Main experiment dataset splitting method}
         \label{fig:main-split-distribution-main}
     \end{subfigure}
-    \caption{Distribution of the initial image dataset across training, validation and test sets}
+    \\
+    \begin{subfigure}[a]{0.9\textwidth}
+        \includegraphics[width=\textwidth]{main/split/split_distribution_trial}
+        \caption{Trial experiment dataset splitting method}
+        \label{fig:main-split-distribution-trial}
+    \end{subfigure}
+    \caption{Distribution of the image dataset across training, validation and test sets}
     \label{fig:main-split-distribution}
     \end{figure}
-    
-    The new splitting method was employed in all main experiments due to its better performance regarding the distance to the target split ratio.
     
 \subsection{Classification performance}
     Two pre-trained and adapted models were used in the main set of experiments: older and less computational demanding CaffeNet \cite{CaffeNet}, and newer and more advanced GoogleNet \cite{Szegedy2015GoingDeeper}. Both systems were trained to classify 663 selected categories. This section presents achieved classification performance and comparison of these systems.
@@ -316,7 +321,7 @@ All lessons learned during the trial set of experiments were applied to perform 
     
     Training and validation loss curves for CaffeNet based system is shown on Figure \ref{fig:main-caffenet-training-curve}. Snapshot of the system at 2500 iteration was used for all subsequent computations since while training loss continued to go down being optimized by the solver algorithm, the validation loss remained almost the same in further iterations. In other words, after 2500 iterations the model started to overfit on the training set.
     
-    \begin{figure}[H]
+    \begin{figure}[ht!]
         \centering
         \includegraphics[width=\textwidth]{main/caffenet_training_curve}
         \caption[Main experiment. Training and validation loss curve for CaffeNet based model]{Training and validation loss curve for CaffeNet based model}
@@ -325,14 +330,14 @@ All lessons learned during the trial set of experiments were applied to perform 
     
     The same approach was used to determine termination point for GoogleNet model. Therefore, system snapshot at 35000 iterations was chosen as the most optimal one for the same reasons. Training and validation losses for GoogleNet model are shown on Figure \ref{fig:main-googlenet-training-curve}.
     
-    \begin{figure}[H]
+    \begin{figure}[ht!]
         \centering
         \includegraphics[width=\textwidth]{main/googlenet_training_curve}
         \caption[Main experiment. Training and validation loss curve for GoogleNet based model]{Training and validation loss curve for GoogleNet based model}
         \label{fig:main-googlenet-training-curve}
     \end{figure}
     
-    There is a noticeable difference in the behavior of two training loss curves. It is visually evident that CaffeNet training loss is more stable than the GoogleNet one. This behavior is connected with different batch size used for training of these to networks. As mentioned in Methods chapter, due to the bigger number of layers in GoogleNet than CaffeNet this model also requires more GPU memory to perform training, therefore the number of images that can be processed in one iteration is also smaller (128 images in GoogleNet compared to 900 in CaffeNet case for a given GPU). Since in the setup used the solver optimizes network weights based on a single iteration, smaller number of images lead to less generalizable changes in weights for the whole dataset. As a result, the difference in training loss between two iterations can be bigger.
+    There is a noticeable difference in the behavior of two training loss curves. It is visually evident that CaffeNet training loss is more stable than the GoogleNet one. This behavior is connected with different batch size used for training of these to networks. As mentioned in Methodology chapter, due to the bigger number of layers in GoogleNet than CaffeNet this model also requires more GPU memory to perform training, therefore the number of images that can be processed in one iteration is also smaller (128 images in GoogleNet compared to 900 in CaffeNet case for a given GPU). Since in the setup used the solver optimizes network weights based on a single iteration, smaller number of images lead to less generalizable changes in weights for the whole dataset. As a result, the difference in training loss between two iterations can be bigger.
     
     It is hard to show classification performance for each category due to a big number of them. Therefore, several charts were built to give insights on the general level of average precision of the trained classification systems. Average precision values for the top 40 categories of CaffeNet system are compared with values for the same categories from the GoogleNet model on Figure \ref{fig:main-ap-top-40}. GoogleNet has better average precision in 26 (65\%) of these categories. The same top 5 categories (\textit{football}, \textit{skiing}, \textit{alone}, \textit{icehockey}, and \textit{team-handball}), in an identical order appear in both implementations. Similar to the trial set of experiments, sports categories were highly represented in the top categories for both CaffeNet and GoogleNet systems. 36 out of 40 categories have more than 400 images in the training sample. Specifically, the mean value for the size of the training sample for these categories is 22848.85 with the standard deviation of 47529.22.
     

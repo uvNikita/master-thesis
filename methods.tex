@@ -43,6 +43,8 @@ In addition to image metadata, NTB provided the author with categories tree defi
     
     After selection of the categories, some of them were merged or renamed. The final list of 39 categories is shown in Table \ref{table:trial-categories} together with the names of the NTB labels that were merged to form a new category.
     
+    Since the library interface for creation of LMDB entries allows assigning only one label to an image, the multi-label case of classification requires much more work. Therefore, for the separate experiment where LMDB \cite{lmdb} file was used as a pictures content data source (see section \ref{sec:trial-training}), skiing subcategories were chosen since these were mutually exclusive in NTB's dataset.
+    
     \begin{table}[H]
     \small
     \centering
@@ -62,29 +64,29 @@ In addition to image metadata, NTB provided the author with categories tree defi
     \label{table:trial-categories}
     \end{table}
     
-    Since the library interface for creation of LMDB entries allows assigning only one label to an image, the multi-label case of classification requires much more work. Therefore, for the separate experiment where LMDB \cite{lmdb} file was used as a pictures content data source (see section \ref{sec:trial-training}), skiing subcategories were chosen since these were mutually exclusive in NTB's dataset.
-    
     \subsection{Dataset preparation}
     \label{sec:trial-dataset-prep}
-    The base training dataset was created using selected categories. Distribution of images for each category is shown on Figure \ref{fig:trial-distribution-base}. The chart indicates a big imbalance in the number of images per category. Undersampling approach was used to solve this issue, where random images from the majority categories were removed from the dataset. There is additional challenge connected with a multi-label classification that rises when some of the categories are tightly coupled, meaning that one image can be part of several categories. In this case, by removing an image from one category, it will have to be removed from all other categories it belongs to keep consistency in the dataset. If the image will not be removed from the whole dataset and will belong only to the part of its actual categories, it can lead to false-positive errors (which are not errors originally) during the training \cite{Sechidis2011OnData}. The problem arise when the image has to be removed from the category with a small number of images initially. There are two choices in this case:
+    The base training dataset was created using selected categories. Distribution of images for each category is shown on Figure \ref{fig:trial-distribution-base}.
     
-    \begin{itemize}
-        \item To remove an image from all categories. In this case, it is possible to acieve state when no category has more pictures than the desired threshold, but this can lead to an even smaller number of images in underrepresented categories.
-        \item To keep a picture in all categories. In this case, categories with a limited number of pictures will be preserved. However, it can be a situation when some categories size exceeded the desired threshold.
-    \end{itemize}
-    
-    \begin{figure}[h!]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial-distribution-base}
         \caption[Trial experiment. Category size distribution]{Category size distribution}
         \label{fig:trial-distribution-base}
     \end{figure}
     
+    The chart indicates a big imbalance in the number of images per category. Undersampling approach was used to solve this issue, where random images from the majority categories were removed from the dataset. There is additional challenge connected with a multi-label classification that rises when some of the categories are tightly coupled, meaning that one image can be part of several categories. In this case, by removing an image from one category, it will have to be removed from all other categories it belongs to keep consistency in the dataset. If the image will not be removed from the whole dataset and will belong only to the part of its actual categories, it can lead to false-positive errors (which are not errors originally) during the training \cite{Sechidis2011OnData}. The problem arise when the image has to be removed from the category with a small number of images initially. There are two choices in this case:
+    
+    \begin{itemize}
+        \item To remove an image from all categories. In this case, it is possible to acieve state when no category has more pictures than the desired threshold, but this can lead to an even smaller number of images in underrepresented categories.
+        \item To keep a picture in all categories. In this case, categories with a limited number of pictures will be preserved. However, it can be a situation when some categories size exceeded the desired threshold.
+    \end{itemize}
+    
     The decision on which choice to make depends on the particular case with the specific imbalance level, the level of intersection between categories as well as a total number of images in all categories. Since some of the categories from the constructed dataset in this research had only 1000 images, the second option of keeping images in all categories was chosen.
     
     The resulting balanced dataset with the threshold level of 10000 is shown on Figure \ref{fig:trial-distribution-balanced}. Due to the chosen threshold, \textit{person}, \textit{football}, \textit{skiing}, \textit{team-handball}, \textit{woman}, \textit{crowd}, \textit{child}, \textit{skating} and \textit{car} categories were undersampled.
     
-    \begin{figure}[h!]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{trial-distribution-balanced}
         \caption[Trial experiment. Category size distribution dataset balancing]{Category size distribution dataset balancing}
@@ -103,7 +105,7 @@ In addition to image metadata, NTB provided the author with categories tree defi
     \label{sec:trial-training}
     Caffe \cite{Caffe} learning framework was used in the research. Specifically, pycaffe \cite{pycaffe} Python interface was used to create specification, train, and test deep neural networks.
     
-    Due to the relatively old hardware available to the author during the trial experiments (see section \ref{sec:trial-hw}), CaffeNet \cite{CaffeNet} was chosen as a base neural network since it is a slightly changed version of AlexNet which was trained on the similar hardware \cite{Krizhevsky2012ImageNetDNN}.
+    Due to the relatively old hardware available to the author during the trial experiments (see Section \ref{sec:trial-hw}), CaffeNet \cite{CaffeNet} was chosen as a base neural network since it is a slightly changed version of AlexNet which was trained on the similar hardware \cite{Krizhevsky2012ImageNetDNN}.
     
     The fine-tuning approach of the pre-trained network described in the section \ref{sec:transfer-learning} was used in the study. Pretrained weights for the CaffeNet were downloaded from the Caffe Model Zoo \cite{CaffeModelZoo}.
     
